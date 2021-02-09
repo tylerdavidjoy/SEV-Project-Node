@@ -19,6 +19,8 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to The Church Management System." });
 });
 
+require("./routes/church.routes.js")(app);
+
 // set port, listen for requests
 app.listen(PORT, () => {
 
