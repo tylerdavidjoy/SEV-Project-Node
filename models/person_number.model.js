@@ -40,8 +40,8 @@ Person_Number.findById = (id, result) => {
       }
   
       if (res.length) {
-        console.log("found person_numbers: ", res[0]);
-        result(null, res[0]);
+        console.log("found person_numbers: ", res);
+        result(null, res);
         return;
       }
   
@@ -63,7 +63,7 @@ Person_Number.remove = (id, result) => {
         result({ kind: "not_found" }, null);
         return;
       }
-      
+
       else {
         console.log("deleted person_number(s) with number_ID: ", id);
         result(null, res);
