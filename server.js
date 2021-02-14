@@ -23,9 +23,9 @@ require("./routes/church.routes.js")(app);
 
 // set port, listen for requests
 app.listen(PORT, () => {
-
-  if(process.env.NODE_ENV == "development") //Reminder during development, does not run deployed
+  if(process.env.NODE_ENV == 'development') //Reminder during development, does not run deployed
     console.log("Make sure Apache and MySQL are running via XAMPP");
-
   console.log("Server is running on port " + PORT + ".");
 });
+
+module.exports = app;
