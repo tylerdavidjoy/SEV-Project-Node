@@ -86,16 +86,19 @@ module.exports = app => {
     // Update a address
     app.put("/address", address.update);
 
-    // Delete a person_number
+    // Delete a address
     app.delete("/address", address.delete);
 
     // ----------------------------------
     // person_address Table API
     // ----------------------------------
 
-    // Create a new address
-    app.post("/address", address.create);
+    // Create a new person_address
+    app.post("/person_address", person_address.create);
 
-    // Find address(s) by a parameter
-    app.get("/address", address.find);
+    // Find person_address(s) by a parameter
+    app.get("/person_address", person_address.find);
+
+    // Delete a person_number
+    app.delete("/person_address", person_address.delete);
 };
