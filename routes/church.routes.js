@@ -98,4 +98,21 @@ module.exports = app => {
 
     // Find address(s) by a parameter
     app.get("/address", address.find);
+
+
+    // ----------------------------------
+    // person Table API
+    // ----------------------------------
+
+    //Create a new person
+    app.post("/person", person.create);
+
+    // Find person_number(s) by a parameter
+    app.get("/person", person.find);
+
+    // Update a person_number
+    app.put("/person", person.update);
+
+    // Delete a person_number
+    app.delete("/person", person.delete);
 };
