@@ -5,6 +5,7 @@ module.exports = app => {
     const person_number = require("../controllers/person_number.controller.js");
     const address = require("../controllers/address.controller.js");
     const person_address = require("../controllers/person_address.controller.js");
+    const person = require("../controllers/person.controller.js");
 
     // ----------------------------------
     // valid_value Table API
@@ -101,4 +102,20 @@ module.exports = app => {
 
     // Delete a person_number
     app.delete("/person_address", person_address.delete);
+
+    // ----------------------------------
+    // person Table API
+    // ----------------------------------
+
+    //Create a new person
+    app.post("/person", person.create);
+
+    // Find person_number(s) by a parameter
+    app.get("/person", person.find);
+
+    // Update a person_number
+    app.put("/person", person.update);
+
+    // Delete a person_number
+    app.delete("/person", person.delete);
 };
