@@ -3,6 +3,7 @@ module.exports = app => {
     const congregation = require("../controllers/congregation.controller.js");
     const phone_number = require("../controllers/phone_number.controller.js");
     const person_number = require("../controllers/person_number.controller.js");
+    const person = require("../controllers/person.controller.js");
 
     // ----------------------------------
     // valid_value Table API
@@ -70,4 +71,21 @@ module.exports = app => {
 
     // Delete a person_number
     app.delete("/person_number", person_number.delete);
+    
+
+    // ----------------------------------
+    // person Table API
+    // ----------------------------------
+
+    //Create a new person
+    app.post("/person", person.create);
+
+    // Find person_number(s) by a parameter
+    app.get("/person", person.find);
+
+    // Update a person_number
+    app.put("/person", person.update);
+
+    // Delete a person_number
+    app.delete("/person", person.delete);
 };
