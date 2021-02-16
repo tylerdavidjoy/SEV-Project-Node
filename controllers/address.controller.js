@@ -54,7 +54,7 @@ exports.find = (req, res) => {
       });
     // if this is a get by person_ID call
     else 
-      Address.findByPerson(person_ID, (err, data) => {
+      Address.findByPersonID(person_ID, (err, data) => {
         if (err)
           res.status(500).send({
             message:

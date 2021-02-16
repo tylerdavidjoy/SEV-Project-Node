@@ -15,23 +15,28 @@ Address.create = (address, person_ID, result) => {
                 console.log("error: ", err);
                 addressReject(err);
             } else {
-                console.log("created address with id: ", res.insertID);
-                addressResolve(res.insertID);
+                console.log("created address with id: ", res.insertId);
+                addressResolve(res.insertId);
             }
         })
 
     })
     addressPromise.then(
         function(response) {
-            sql.query(`INSERT INTO church.person_address SET person_ID = "${person_ID}", address_ID = "${response}"`, (err, res) => {
-                if(err) {
-                    console.log("error: ", err);
-                    result(err, null);
-                } else {
-                    console.log("created person_address with person_ID: ", person_ID, " and address_ID: ", response);
-                    result(null, address);
-                }
-            })
+            if(person_ID != null)
+            {
+                sql.query(`INSERT INTO church.person_address SET person_ID = "${person_ID}", address_ID = "${response}"`, (err, res) => {
+                    if(err) {
+                        console.log("error: ", err);
+                        result(err, null);
+                    } else {
+                        console.log("created person_address with person_ID: ", person_ID, " and address_ID: ", response);
+                        result(null, address);
+                    }
+                })
+            } else {
+                result(null, address);
+            }
         },
         function(error) {
             result(error, null);
@@ -89,9 +94,9 @@ Address.findByPersonID = (person_ID, result) => {
     })
 }
 
-/* NOT DONE
+
 Address.updateById = (id, address, result) => {
-    sql.query(`UPDATE address SET value_group = "${address.value_group}", value = "${address.value}" WHERE ID = "${id}"`,(err, res) => {
+    sql.query(`UPDATE address SET address = "${address.address}", type = "${address.type}" WHERE ID = "${id}"`,(err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
@@ -126,5 +131,5 @@ Address.remove = (id, result) => {
       result(null, res);
     });
   };
-*/
+
 module.exports = Address;

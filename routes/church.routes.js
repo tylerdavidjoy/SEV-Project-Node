@@ -4,6 +4,7 @@ module.exports = app => {
     const phone_number = require("../controllers/phone_number.controller.js");
     const person_number = require("../controllers/person_number.controller.js");
     const address = require("../controllers/address.controller.js");
+    const person_address = require("../controllers/person_address.controller.js");
 
     // ----------------------------------
     // valid_value Table API
@@ -87,4 +88,14 @@ module.exports = app => {
 
     // Delete a person_number
     app.delete("/address", address.delete);
+
+    // ----------------------------------
+    // person_address Table API
+    // ----------------------------------
+
+    // Create a new address
+    app.post("/address", address.create);
+
+    // Find address(s) by a parameter
+    app.get("/address", address.find);
 };
