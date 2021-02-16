@@ -6,6 +6,7 @@ module.exports = app => {
     const address = require("../controllers/address.controller.js");
     const person_address = require("../controllers/person_address.controller.js");
     const person = require("../controllers/person.controller.js");
+    const family = require("../controllers/family.controller.js");
 
     // ----------------------------------
     // valid_value Table API
@@ -100,7 +101,7 @@ module.exports = app => {
     // Find person_address(s) by a parameter
     app.get("/person_address", person_address.find);
 
-    // Delete a person_number
+    // Delete a address
     app.delete("/person_address", person_address.delete);
 
     // ----------------------------------
@@ -110,12 +111,28 @@ module.exports = app => {
     //Create a new person
     app.post("/person", person.create);
 
-    // Find person_number(s) by a parameter
+    // Find person(s) by a parameter
     app.get("/person", person.find);
 
-    // Update a person_number
+    // Update a person
     app.put("/person", person.update);
 
-    // Delete a person_number
+    // Delete a person
     app.delete("/person", person.delete);
+
+    // ----------------------------------
+    // family Table API
+    // ----------------------------------
+
+    //Create a new family
+    app.post("/family", family.create);
+
+    // Find family(s) by a parameter
+    app.get("/family", family.find);
+
+    // Update a family
+    app.put("/person", family.update);
+
+    // Delete a family
+    app.delete("/family", family.delete);
 };

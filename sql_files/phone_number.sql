@@ -3,5 +3,8 @@ CREATE TABLE `phone_number` (
   `number` char(10) NOT NULL,
   `can_publish` tinyint(4) NOT NULL,
   `type` int(11) DEFAULT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`ID`),
+  KEY `type_idx` (`type`),
+  KEY `phone_number_type_idx` (`type`),
+  CONSTRAINT `phone_number_type` FOREIGN KEY (`type`) REFERENCES `valid_value` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
