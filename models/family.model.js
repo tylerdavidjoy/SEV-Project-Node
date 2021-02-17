@@ -51,8 +51,7 @@ Family.findById = (id, result) => {
 }
 
 
-Family.updateById = (id, name, result) => {
-  console.log(name);
+Family.updateById = (id, family, result) => {
     sql.query(`UPDATE family SET congregation_ID = "${family.congregation_ID}", address_ID = "${family.address_ID}" WHERE family.ID = "${id}"`,(err, res) => {
         if (err) {
             console.log("error: ", err);

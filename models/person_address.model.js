@@ -30,8 +30,8 @@ Person_Address.findAll = result => {
     })
 }
 
-Person_Address.remove = (id, result) => {
-    sql.query(`DELETE FROM person_address WHERE address_ID = "${id}"`, (err, res) => {
+Person_Address.remove = (person_ID, address_ID, result) => {
+    sql.query(`DELETE FROM person_address WHERE person_ID = "${person_ID}" AND address_ID = "${address_ID}"`, (err, res) => {
       if (err) {
         console.log("error: ", err);
         result(null, err);
@@ -45,7 +45,7 @@ Person_Address.remove = (id, result) => {
       }
 
       else {
-        console.log("deleted person_address(s) with address_ID: ", id);
+        console.log("deleted person_address(s) with person_ID: ", person_ID, " and address_ID", address_ID);
         result(null, res);
       }
 

@@ -131,7 +131,7 @@ module.exports = app => {
     app.get("/family", family.find);
 
     // Update a family
-    app.put("/person", family.update);
+    app.put("/family", family.update);
 
     // Delete a family
     app.delete("/family", family.delete);
