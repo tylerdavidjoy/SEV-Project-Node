@@ -89,11 +89,6 @@ exports.delete = (req,res) => {
             message: "Could not delete phone_number with id " + id
             });
         } 
-
-        else
-        {
-          Person_Number_Controller.delete(req,res);
-        }
-
+        else res.send({ message: `phone_number was deleted successfully!` });
     });
 }
