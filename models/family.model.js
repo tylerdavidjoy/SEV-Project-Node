@@ -50,6 +50,30 @@ Family.findById = (id, result) => {
     })
 }
 
+Family.findPersonsInFamily = (id, result) => {
+  sql.query(`SELECT * FROM person WHERE person.family_ID = "${id}"`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+    console.log("persons: ", res);
+    result(null, res);
+})
+}
+
+Family.findFamilyForPerson = (person_ID, result) => {
+  sql.query(`SELECT * FROM family WHERE family.ID IN (SELECT family_ID FROM person WHERE person.ID = "${person_ID}")`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+    console.log("persons: ", res);
+    result(null, res);
+})
+}
+
 
 Family.updateById = (id, family, result) => {
     sql.query(`UPDATE family SET congregation_ID = "${family.congregation_ID}", address_ID = "${family.address_ID}" WHERE family.ID = "${id}"`,(err, res) => {
