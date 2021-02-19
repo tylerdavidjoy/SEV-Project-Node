@@ -54,6 +54,25 @@ Phone_Number.findById = (id, result) => {
     })
 }
 
+Phone_Number.findbyPerson = (person_id, result) => {
+  sql.query(`SELECT * FROM phone_number WHERE phone_number.ID IN (SELECT number_ID FROM person_number WHERE person_number.person_ID = "${person_id}")`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found phone_numbers: ", res);
+      result(null, res);
+      return;
+    }
+
+    // not found phone_number with the id
+    result({ kind: "not_found" }, null);
+  })
+}
+
 
 Phone_Number.updateById = (id, phone_number, result) => {
     sql.query(`UPDATE phone_number SET number = "${phone_number.number}", can_publish = ${phone_number.can_publish}, type = ${phone_number.type}  WHERE ID = "${id}"`,(err, res) => {
