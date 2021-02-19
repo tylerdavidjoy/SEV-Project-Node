@@ -36,9 +36,9 @@ exports.create = (req, res) => {
 
 exports.find = (req, res) => {
     const id = req.query.id;
-
+    const person_ID =  req.query.person_ID;
     // if this is a GET ALL call
-    if(id == null)
+    if(id == null && person_ID == null)
       Phone_Number.findAll((err, data) => {
         if (err)
           res.status(500).send({
@@ -51,6 +51,19 @@ exports.find = (req, res) => {
     // if this is a GET by Id call
     else if(id != null)
     Phone_Number.findById(id, (err, data) => {
+          if (err)
+          {
+            res.status(500).send({
+              message:
+                err.message || "Internal server error - get phone_number."
+            });
+          }
+          else res.send(data);
+      });
+    
+    //Get all phone numbers for a person
+    else if(person_ID != null)
+    Phone_Number.findbyPerson(person_ID, (err, data) => {
           if (err)
           {
             res.status(500).send({
