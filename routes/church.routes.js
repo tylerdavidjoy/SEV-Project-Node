@@ -7,6 +7,8 @@ module.exports = app => {
     const person_address = require("../controllers/person_address.controller.js");
     const person = require("../controllers/person.controller.js");
     const family = require("../controllers/family.controller.js");
+    const group = require("../controllers/group.controller.js");
+    const group_person = require("../controllers/group_person.controller.js");
 
     // ----------------------------------
     // valid_value Table API
@@ -135,4 +137,34 @@ module.exports = app => {
 
     // Delete a family
     app.delete("/family", family.delete);
+
+
+    // ----------------------------------
+    // group Table API
+    // ----------------------------------
+
+    //Create a new group
+    app.post("/group", group.create);
+
+    // Find group(s) by a parameter
+    app.get("/group", group.find);
+
+    // Update a group
+    app.put("/group", group.update);
+
+    // Delete a group
+    app.delete("/group", group.delete);
+
+    // ----------------------------------
+    // group_person Table API
+    // ----------------------------------
+
+    //Create a new group_person
+    app.post("/group_person", group_person.create);
+
+    // Find group_person(s) by a parameter
+    app.get("/group_person", group_person.find);
+
+    // Delete a group_person
+    app.delete("/group_person", group_person.delete);
 };
