@@ -10,6 +10,7 @@ module.exports = app => {
     const group = require("../controllers/group.controller.js");
     const group_person = require("../controllers/group_person.controller.js");
     const life_event = require("../controllers/life_event.controller.js");
+    const room = require("../controllers/room.controller.js");
 
     // ----------------------------------
     // valid_value Table API
@@ -184,4 +185,20 @@ module.exports = app => {
 
     // Delete a life_event
     app.delete("/life_event", life_event.delete);
+
+    // ----------------------------------
+    // room Table API
+    // ----------------------------------
+
+    //Create a new room
+    app.post("/room", room.create);
+
+    // Find room(s) by a parameter
+    app.get("/room", room.find);
+
+    // Update a room
+    app.put("/room", room.update);
+
+    // Delete a room
+    app.delete("/room", room.delete);
 };
