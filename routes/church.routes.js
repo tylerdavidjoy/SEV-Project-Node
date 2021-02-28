@@ -9,6 +9,7 @@ module.exports = app => {
     const family = require("../controllers/family.controller.js");
     const group = require("../controllers/group.controller.js");
     const group_person = require("../controllers/group_person.controller.js");
+    const life_event = require("../controllers/life_event.controller.js");
 
     // ----------------------------------
     // valid_value Table API
@@ -167,4 +168,20 @@ module.exports = app => {
 
     // Delete a group_person
     app.delete("/group_person", group_person.delete);
+
+    // ----------------------------------
+    // life_event Table API
+    // ----------------------------------
+
+    //Create a new life_event
+    app.post("/life_event", life_event.create);
+
+    // Find life_event(s) by a parameter
+    app.get("/life_event", life_event.find);
+
+    // Update a life_event
+    app.put("/life_event", life_event.update);
+
+    // Delete a life_event
+    app.delete("/life_event", life_event.delete);
 };
