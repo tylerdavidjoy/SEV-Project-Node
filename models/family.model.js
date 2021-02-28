@@ -1,53 +1,53 @@
 const sql = require("./db.js");
 
 // Constructor
-const Family = function(family) {
-    this.ID = family.ID;
-    this.congregation_ID = family.congregation_ID;
-    this.address_ID = family.address_ID;
+const Family = function (family) {
+  this.ID = family.ID;
+  this.congregation_ID = family.congregation_ID;
+  this.address_ID = family.address_ID;
 }
 
 Family.create = (family, result) => {
-    sql.query(`INSERT INTO church.family SET congregation_ID = "${family.congregation_ID}", address_ID = "${family.address_ID}"`, (err, res) => {
-        if (err) {
-            console.log("error: ", err);
-            result(err, null);
-            return;
-        } else {
-            result(null, family);
-        }
-    })
+  sql.query(`INSERT INTO church.family SET congregation_ID = "${family.congregation_ID}", address_ID = "${family.address_ID}"`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    } else {
+      result(null, family);
+    }
+  })
 }
 
 Family.findAll = result => {
-    sql.query("SELECT * FROM family", (err, res) => {
-        if (err) {
-          console.log("error: ", err);
-          result(err, null);
-          return;
-        }
-        console.log("families: ", res);
-        result(null, res);
-    })
+  sql.query("SELECT * FROM family", (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+    console.log("families: ", res);
+    result(null, res);
+  })
 }
 
 Family.findById = (id, result) => {
-    sql.query(`SELECT * FROM family WHERE family.ID = "${id}"`, (err, res) => {
-      if (err) {
-        console.log("error: ", err);
-        result(err, null);
-        return;
-      }
-  
-      if (res.length) {
-        console.log("found family: ", res[0]);
-        result(null, res[0]);
-        return;
-      }
-  
-      // not found family with the id
-      result({ kind: "not_found" }, null);
-    })
+  sql.query(`SELECT * FROM family WHERE family.ID = "${id}"`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found family: ", res[0]);
+      result(null, res[0]);
+      return;
+    }
+
+    // not found family with the id
+    result({ kind: "not_found" }, null);
+  })
 }
 
 Family.findPersonsInFamily = (id, result) => {
@@ -59,7 +59,7 @@ Family.findPersonsInFamily = (id, result) => {
     }
     console.log("persons: ", res);
     result(null, res);
-})
+  })
 }
 
 Family.findFamilyForPerson = (person_ID, result) => {
@@ -71,45 +71,70 @@ Family.findFamilyForPerson = (person_ID, result) => {
     }
     console.log("persons: ", res);
     result(null, res);
-})
+  })
 }
 
 
 Family.updateById = (id, family, result) => {
-    sql.query(`UPDATE family SET congregation_ID = "${family.congregation_ID}", address_ID = "${family.address_ID}" WHERE family.ID = "${id}"`,(err, res) => {
-        if (err) {
-            console.log("error: ", err);
-            result(err, null);
-            return;
-        }
-  
-        if (res.affectedRows == 0) {
-            // not found family with the id
-            result({ kind: "not_found" }, null);
-            return;
-        }
-        result(null, res);
-        }
-    );
+  sql.query(`UPDATE family SET congregation_ID = "${family.congregation_ID}", address_ID = "${family.address_ID}" WHERE family.ID = "${id}"`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.affectedRows == 0) {
+      // not found family with the id
+      result({ kind: "not_found" }, null);
+      return;
+    }
+    result(null, res);
+  }
+  );
 }
 
 Family.remove = (id, result) => {
+  let familyPromise = new Promise(function (familyResolve, familyReject) {
     sql.query(`DELETE FROM family WHERE ID = "${id}"`, (err, res) => {
       if (err) {
         console.log("error: ", err);
         result(null, err);
-        return;
+        familyReject(err);
       }
-  
+
       if (res.affectedRows == 0) {
         // not found family with the id
         result({ kind: "not_found" }, null);
-        return;
+        familyReject({ kind: "not_found" }, null);
       }
-  
+
       console.log("deleted family with id: ", id);
       result(null, res);
+      familyResolve();
     });
-  };
+  })
+  familyPromise.then(
+    function () {
+      garbageCollection();
+    },
+    function (error) {
+      console.log("error: ", error);
+    }
+  )
+};
 
+function garbageCollection() {
+  sql.query(`DELETE FROM address WHERE NOT EXISTS (SELECT * from person_address WHERE person_address.address_ID = address.ID)
+    AND NOT EXISTS (SELECT * FROM family WHERE family.address_ID = address.ID)`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      return;
+    }
+
+    if (res.affectedRows == 0) {
+      console.log("No deleted address rows");
+      return;
+    }
+  })
+}
 module.exports = Family;
