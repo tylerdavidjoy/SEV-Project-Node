@@ -70,6 +70,65 @@ Life_Event.findByPerson = (id, result) => {
   })
 }
 
+Life_Event.findByType = (type, result) => {
+  sql.query(`SELECT * FROM life_event WHERE life_event.type = "${type}"`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found life_event(s): ", res);
+      result(null, res);
+      return;
+    }
+
+    // not found life_event with the id
+    result({ kind: "not_found" }, null);
+  })
+}
+
+Life_Event.findbydateType = (type,start,end, result) => {
+  sql.query(`SELECT * FROM life_event WHERE life_event.type = "${type}" AND DAYOFYEAR(life_event.date) BETWEEN DAYOFYEAR("${start}") AND DAYOFYEAR("${end}")`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found life_event(s): ", res);
+      result(null, res);
+      return;
+    }
+
+    // not found life_event with the id
+    result({ kind: "not_found" }, null);
+  })
+}
+
+Life_Event.findbydate = (start,end, result) => {
+  start = String(start);
+  end = String(end);
+  sql.query(`SELECT * FROM life_event WHERE DAYOFYEAR(life_event.date) BETWEEN DAYOFYEAR("${start}") AND DAYOFYEAR("${end}")`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found life_event(s): ", res);
+      result(null, res);
+      return;
+    }
+
+    // not found life_event with the id
+    result({ kind: "not_found" }, null);
+  })
+}
+
 
 Life_Event.updateById = (id, life_e, result) => {
     sql.query(`UPDATE life_event SET person_ID = "${life_e.person_ID}", description = "${life_e.description}", date = "${life_e.date}", type = ${life_e.type} WHERE ID = "${id}"`,(err, res) => {
