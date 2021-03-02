@@ -29,6 +29,7 @@ exports.create = (req, res) => {
 exports.find = (req, res) => {
     const id = req.query.id;
     const person_ID = req.query.person_ID;
+    const get_members = req.query.get_members;
 
     // if this is a GET ALL call
     if(id == null && person_ID == null)
@@ -42,7 +43,7 @@ exports.find = (req, res) => {
       });
 
     // if this is a GET by Id call
-    else if(id != null)
+    else if(id != null && get_members == null)
     Group.findById(id, (err, data) => {
           if (err)
           {
@@ -57,6 +58,19 @@ exports.find = (req, res) => {
     // if this is a GET by Person call
     else if(person_ID != null)
     Group.findByPerson(person_ID, (err, data) => {
+          if (err)
+          {
+            res.status(500).send({
+              message:
+                err.message || "Internal server error - get group."
+            });
+          }
+          else res.send(data);
+      });
+
+    // if this is a GET by Id call
+    else if(id != null && get_members != null)
+    Group.findMembers(id, (err, data) => {
           if (err)
           {
             res.status(500).send({

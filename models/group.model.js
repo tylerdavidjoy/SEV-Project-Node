@@ -70,6 +70,25 @@ Group.findByPerson = (person_ID, result) => {
   })
 }
 
+Group.findMembers = (id, result) => {
+  sql.query(`SELECT * FROM church.person WHERE person.ID IN (SELECT person_ID FROM group_person WHERE group_ID = ${id})`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found groups: ", res);
+      result(null, res);
+      return;
+    }
+
+    // not found group with the id
+    result({ kind: "not_found" }, null);
+  })
+}
+
 
 Group.updateById = (id, new_group, result) => {
   sql.query(`UPDATE church.group SET type = "${new_group.type}", leader = ${new_group.leader}, congregation_ID = ${new_group.congregation_ID} WHERE ID = "${id}"`,(err, res) => {
