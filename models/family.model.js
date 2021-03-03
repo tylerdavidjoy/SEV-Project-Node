@@ -5,10 +5,12 @@ const Family = function (family) {
   this.ID = family.ID;
   this.congregation_ID = family.congregation_ID;
   this.address_ID = family.address_ID;
+  this.head_ID = family.head_ID;
 }
 
 Family.create = (family, result) => {
-  sql.query(`INSERT INTO church.family SET congregation_ID = "${family.congregation_ID}", address_ID = "${family.address_ID}"`, (err, res) => {
+  sql.query(`INSERT INTO church.family SET congregation_ID = "${family.congregation_ID}", address_ID = "${family.address_ID}", 
+            head_ID = "${family.head_ID}"`, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);
@@ -62,6 +64,18 @@ Family.findPersonsInFamily = (id, result) => {
   })
 }
 
+Family.findHeadOfFamily = (id, result) => {
+  sql.query(`SELECT * FROM person WHERE person.ID IN (SELECT head_ID FROM family WHERE head_ID = "${id}")`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+    console.log("person: ", res);
+    result(null, res);
+  })
+}
+
 Family.findFamilyForPerson = (person_ID, result) => {
   sql.query(`SELECT * FROM family WHERE family.ID IN (SELECT family_ID FROM person WHERE person.ID = "${person_ID}")`, (err, res) => {
     if (err) {
@@ -76,7 +90,8 @@ Family.findFamilyForPerson = (person_ID, result) => {
 
 
 Family.updateById = (id, family, result) => {
-  sql.query(`UPDATE family SET congregation_ID = "${family.congregation_ID}", address_ID = "${family.address_ID}" WHERE family.ID = "${id}"`, (err, res) => {
+  sql.query(`UPDATE family SET congregation_ID = "${family.congregation_ID}", address_ID = "${family.address_ID}", 
+            head_ID = "${family.head_ID}" WHERE family.ID = "${id}"`, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);
