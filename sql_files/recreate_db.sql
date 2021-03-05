@@ -156,3 +156,10 @@ CREATE TABLE `event_group` (
   CONSTRAINT `eg_event_ID` FOREIGN KEY (`event_ID`) REFERENCES `event` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `eg_group_ID` FOREIGN KEY (`group_ID`) REFERENCES `group` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `relationship` (
+  `person1_ID` int(11) NOT NULL,
+  `person2_ID` int(11) NOT NULL,
+  `type` int(11) DEFAULT NULL,
+  PRIMARY KEY (`person1_ID`,`person2_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

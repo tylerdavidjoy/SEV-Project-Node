@@ -14,7 +14,7 @@ module.exports = app => {
     const event = require("../controllers/event.controller.js");
     const event_group = require("../controllers/event_group.controller.js");
     const attendee = require("../controllers/attendee.controller.js");
-
+    const relationship = require("../controllers/relationship.controller.js");
 
     // ----------------------------------
     // valid_value Table API
@@ -247,4 +247,20 @@ module.exports = app => {
 
     // Delete a attendee
     app.delete("/attendee", attendee.delete);
+
+    // ----------------------------------
+    // Relationship Table API
+    // ----------------------------------
+
+    //Create a new relationship
+    app.post("/relationship", relationship.create);
+
+    // Find relationship(s) by a parameter
+    app.get("/relationship", relationship.find);
+
+    // Update a relationship
+    app.put("/relationship", relationship.update);
+
+    // Delete a relationship
+    app.delete("/relationship", relationship.delete);
 };
