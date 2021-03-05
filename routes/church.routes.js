@@ -11,6 +11,9 @@ module.exports = app => {
     const group_person = require("../controllers/group_person.controller.js");
     const life_event = require("../controllers/life_event.controller.js");
     const room = require("../controllers/room.controller.js");
+    const event = require("../controllers/event.controller.js");
+    const event_group = require("../controllers/event_group.controller.js");
+    const attendee = require("../controllers/attendee.controller.js");
     const relationship = require("../controllers/relationship.controller.js");
 
     // ----------------------------------
@@ -188,6 +191,22 @@ module.exports = app => {
     app.delete("/life_event", life_event.delete);
 
     // ----------------------------------
+    // event Table API
+    // ----------------------------------
+
+    //Create a new event
+    app.post("/event", event.create);
+
+    // Find event(s) by a parameter
+    app.get("/event", event.find);
+
+    // Update a life_event
+    app.put("/event", event.update);
+
+    // Delete a event
+    app.delete("/event", event.delete);
+
+    // ----------------------------------
     // room Table API
     // ----------------------------------
 
@@ -203,6 +222,31 @@ module.exports = app => {
     // Delete a room
     app.delete("/room", room.delete);
 
+    // ----------------------------------
+    // event_group Table API
+    // ----------------------------------
+
+    //Create a new event_group
+    app.post("/event_group", event_group.create);
+
+    // Find event_group(s) by a parameter
+    app.get("/event_group", event_group.find);
+
+    // Delete a event_group
+    app.delete("/event_group", event_group.delete);
+
+    // ----------------------------------
+    // attendee Table API
+    // ----------------------------------
+
+    //Create a new attendee
+    app.post("/attendee", attendee.create);
+
+    // Find attendee(s) by a parameter
+    app.get("/attendee", attendee.find);
+
+    // Delete a attendee
+    app.delete("/attendee", attendee.delete);
 
     // ----------------------------------
     // Relationship Table API
@@ -219,5 +263,4 @@ module.exports = app => {
 
     // Delete a relationship
     app.delete("/relationship", relationship.delete);
-
 };
