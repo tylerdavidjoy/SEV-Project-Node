@@ -58,6 +58,17 @@ CREATE TABLE `person` (
   CONSTRAINT `person_family_ID` FOREIGN KEY (`family_ID`) REFERENCES `family` (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 
+ALTER TABLE `church`.`family` 
+ADD COLUMN `head_ID` INT NULL AFTER `address_ID`,
+ADD INDEX `head_ID_idx` (`head_ID`);
+;
+ALTER TABLE `church`.`family` 
+ADD CONSTRAINT `head_ID`
+  FOREIGN KEY (`head_ID`)
+  REFERENCES `church`.`person` (`ID`)
+  ON DELETE SET NULL
+  ON UPDATE NO ACTION;
+
 CREATE TABLE `person_address` (
   `person_ID` int(11) NOT NULL,
   `address_ID` int(11) NOT NULL,

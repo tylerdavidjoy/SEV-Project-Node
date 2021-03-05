@@ -30,9 +30,12 @@ exports.create = (req, res) => {
 exports.find = (req, res) => {
     const id = req.query.id;
     const person_id = req.query.person_id;
+    const type = req.query.type;
+    const date_start = req.query.date_start;
+    const date_end = req.query.date_end;
 
     // if this is a GET ALL call
-    if(id == null && person_id == null)
+    if(id == null && person_id == null && type == null && date_start == null)
     Life_Event.findAll((err, data) => {
         if (err)
           res.status(500).send({
@@ -58,6 +61,46 @@ exports.find = (req, res) => {
     // if this is a GET by person call
     else if(person_id != null)
     Life_Event.findByPerson(person_id, (err, data) => {
+          if (err)
+          {
+            res.status(500).send({
+              message:
+                err.message || "Internal server error - get life_event."
+            });
+          }
+          else res.send(data);
+      });
+
+      //Get all of 1 type
+    else if(type != null && date_start == null && date_end == null)
+    Life_Event.findByType(type, (err, data) => {
+          if (err)
+          {
+            res.status(500).send({
+              message:
+                err.message || "Internal server error - get life_event."
+            });
+          }
+          else res.send(data);
+      });
+
+    //Get all of 1 type for a date range
+    else if(type != null && date_start !=null && date_end != null)
+    Life_Event.findbydateType(type,date_start,date_end, (err, data) => {
+          if (err)
+          {
+            res.status(500).send({
+              message:
+                err.message || "Internal server error - get life_event."
+            });
+          }
+          else res.send(data);
+      });
+
+
+    //Get all for a date range
+    else if(type == null && date_start !=null && date_end != null)
+    Life_Event.findbydate(date_start,date_end, (err, data) => {
           if (err)
           {
             res.status(500).send({

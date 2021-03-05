@@ -12,7 +12,8 @@ exports.create = (req, res) => {
 
   const family = new Family({
     congregation_ID: req.body.congregation_ID,
-    address_ID: req.body.address_ID
+    address_ID: req.body.address_ID,
+    head_ID: req.body.head_ID
   });
 
   Family.create(family, (err, data) => {
@@ -27,8 +28,9 @@ exports.create = (req, res) => {
 
 exports.find = (req, res) => {
   const id = req.query.id;
-  const isGetPersons = req.query.isGetPersons;
   const person_ID = req.query.person_ID;
+  const isGetPersons = req.query.isGetPersons;
+  const isGetHeadOfFamily = req.query.isGetHeadOfFamily;
 
   // if this is a GET ALL call
   if (id == null && person_ID == null)
@@ -42,7 +44,7 @@ exports.find = (req, res) => {
     });
 
   // if this is a GET by Id call
-  else if (id != null && isGetPersons == 0)
+  else if (id != null && isGetPersons == 0 && isGetHeadOfFamily == 0)
     Family.findById(id, (err, data) => {
       if (err) {
         res.status(500).send({
@@ -52,12 +54,22 @@ exports.find = (req, res) => {
       }
       else res.send(data);
     });
-  else if (id != null && isGetPersons == 1)
+  else if (id != null && isGetPersons == 1 && isGetHeadOfFamily == 0)
     Family.findPersonsInFamily(id, (err, data) => {
       if (err) {
         res.status(500).send({
           message:
             err.message || "Internal server error - get persons in family."
+        });
+      }
+      else res.send(data);
+    })
+  else if (id != null && isGetPersons == 0 && isGetHeadOfFamily == 1)
+    Family.findHeadOfFamily(id, (err, data) => {
+      if (err) {
+        res.status(500).send({
+          message:
+            err.message || "Internal server error - get head of family."
         });
       }
       else res.send(data);

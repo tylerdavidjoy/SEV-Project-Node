@@ -10,7 +10,11 @@ module.exports = app => {
     const group = require("../controllers/group.controller.js");
     const group_person = require("../controllers/group_person.controller.js");
     const life_event = require("../controllers/life_event.controller.js");
+    const room = require("../controllers/room.controller.js");
     const event = require("../controllers/event.controller.js");
+    const event_group = require("../controllers/event_group.controller.js");
+    const attendee = require("../controllers/attendee.controller.js");
+
 
     // ----------------------------------
     // valid_value Table API
@@ -201,4 +205,46 @@ module.exports = app => {
 
     // Delete a event
     app.delete("/event", event.delete);
+
+    // ----------------------------------
+    // room Table API
+    // ----------------------------------
+
+    //Create a new room
+    app.post("/room", room.create);
+
+    // Find room(s) by a parameter
+    app.get("/room", room.find);
+
+    // Update a room
+    app.put("/room", room.update);
+
+    // Delete a room
+    app.delete("/room", room.delete);
+
+    // ----------------------------------
+    // event_group Table API
+    // ----------------------------------
+
+    //Create a new event_group
+    app.post("/event_group", event_group.create);
+
+    // Find event_group(s) by a parameter
+    app.get("/event_group", event_group.find);
+
+    // Delete a event_group
+    app.delete("/event_group", event_group.delete);
+
+    // ----------------------------------
+    // attendee Table API
+    // ----------------------------------
+
+    //Create a new attendee
+    app.post("/attendee", attendee.create);
+
+    // Find attendee(s) by a parameter
+    app.get("/attendee", attendee.find);
+
+    // Delete a attendee
+    app.delete("/attendee", attendee.delete);
 };
