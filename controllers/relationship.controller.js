@@ -42,7 +42,7 @@ exports.find = (req, res) => {
 
     // if this is a GET by Id call
     else if(id != null)
-    Relationship.findById(id, (err, data) => {
+    Relationship.findByPerson(id, (err, data) => {
           if (err)
           {
             res.status(500).send({
