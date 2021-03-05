@@ -28,9 +28,11 @@ exports.create = (req, res) => {
 
 exports.find = (req, res) => {
     const id = req.query.id;
-
+    const person1_ID = req.query.person1_ID;
+    const person2_ID = req.query.person2_ID;
+    
     // if this is a GET ALL call
-    if(id == null)
+    if(person1_ID == null)
     Relationship.findAll((err, data) => {
         if (err)
           res.status(500).send({
@@ -41,8 +43,8 @@ exports.find = (req, res) => {
       });
 
     // if this is a GET by Id call
-    else if(id != null)
-    Relationship.findByPerson(id, (err, data) => {
+    else if(person1_ID != null && person2_ID == null)
+    Relationship.findByPerson(person1_ID, (err, data) => {
           if (err)
           {
             res.status(500).send({
@@ -51,6 +53,17 @@ exports.find = (req, res) => {
             });
           }
           else res.send(data);
+      });
+
+          // if this is a GET ALL call
+    if(person1_ID != null && person2_ID != null)
+    Relationship.findRelation(person1_ID, person2_ID, (err, data) => {
+        if (err)
+          res.status(500).send({
+            message:
+              err.message || "Internal server error - get relationship."
+          });
+        else res.send(data);
       });
 }
 

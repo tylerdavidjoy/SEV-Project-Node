@@ -58,9 +58,28 @@ Relationship.findByPerson = (id, result) => {
     })
 }
 
+Relationship.findRelation = (person1_id, person2_id, result) => {
+  sql.query(`SELECT * FROM relationship WHERE (relationship.person1_ID = "${person1_id}" AND relationship.person2_ID = "${person2_id}")`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found relationships: ", res);
+      result(null, res);
+      return;
+    }
+
+    // not found congregation with the id
+    result({ kind: "not_found" }, null);
+  })
+}
+
 
 Relationship.updateById = (person1_ID,person2_ID, type, result) => {
-    sql.query(`UPDATE relationship SET person1_ID = ${person1_ID}, person2_ID = ${person2_ID}, type = ${type} WHERE (person1_ID = ${person1_ID} AND person2_ID = ${person2_ID}) OR (person2_ID = ${person2_ID} AND person1_ID = ${person1_ID})`,(err, res) => {
+    sql.query(`UPDATE relationship SET person1_ID = ${person1_ID}, person2_ID = ${person2_ID}, type = ${type} WHERE (person1_ID = ${person1_ID} AND person2_ID = ${person2_ID}))`,(err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
