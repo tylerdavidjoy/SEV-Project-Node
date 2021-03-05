@@ -32,7 +32,7 @@ exports.create = (req, res) => {
 
 exports.find = (req, res) => {
     const id = req.query.id;
-    const group_ID = req.body.group_ID;
+    const group_ID = req.query.group_ID;
     const person_ID = req.query.person_ID;
     // if this is a GET ALL call
     if (id == null && group_ID == null && person_ID == null)
@@ -57,7 +57,7 @@ exports.find = (req, res) => {
         });
     // if this is a get by group_ID call
     else if (id == null && group_ID != null && person_ID == null)
-        Event.findByGroupID(group_ID, (err, data) => {
+        Event.findByGroupId(group_ID, (err, data) => {
             if (err)
                 res.status(500).send({
                     message:
@@ -67,7 +67,7 @@ exports.find = (req, res) => {
         })
     // if this is a get by person_ID call
     else
-        Event.findByPersonID(person_ID, (err, data) => {
+        Event.findByPersonId(person_ID, (err, data) => {
             if (err)
                 res.status(500).send({
                     message:
