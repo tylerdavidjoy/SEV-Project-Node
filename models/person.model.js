@@ -56,6 +56,25 @@ Person.findById = (id, result) => {
   })
 }
 
+Person.findByEmail = (email, result) => {
+  sql.query(`SELECT * FROM person WHERE person.email = "${email}"`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found person: ", res);
+      result(null, res);
+      return;
+    }
+
+    // not found person with the id
+    result({ kind: "not_found" }, null);
+  })
+}
+
 Person.updateById = (id, person, result) => {
   sql.query(`UPDATE person SET congregation_ID = ${person.congregation_ID}, f_name = "${person.f_name}", l_name = "${person.l_name}", 
   occupation = "${person.occupation}", employer = "${person.employer}", family_ID = ${person.family_ID}, email = "${person.email}" 

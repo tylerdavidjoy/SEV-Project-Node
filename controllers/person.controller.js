@@ -32,9 +32,10 @@ exports.create = (req, res) => {
 
 exports.find = (req, res) => {
     const id = req.query.id;
+    const email = req.query.email;
 
     // if this is a GET ALL call
-    if(id == null)
+    if(id == null && email == null)
     Person.findAll((err, data) => {
         if (err)
           res.status(500).send({
@@ -45,8 +46,21 @@ exports.find = (req, res) => {
       });
 
     // if this is a GET by Id call
-    else if(id != null)
+    else if(id != null && email == null)
     Person.findById(id, (err, data) => {
+          if (err)
+          {
+            res.status(500).send({
+              message:
+                err.message || "Internal server error - get person."
+            });
+          }
+          else res.send(data);
+      });
+
+    // if this is a GET by email call
+    else if(id == null && email != null)
+    Person.findByEmail(email, (err, data) => {
           if (err)
           {
             res.status(500).send({
