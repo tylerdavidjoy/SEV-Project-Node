@@ -17,7 +17,7 @@ CREATE TABLE `address` (
   `type` int(11) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   KEY `type_idx` (`type`),
-  CONSTRAINT `type` FOREIGN KEY (`type`) REFERENCES `valid_value` (`ID`) ON DELETE SET NULL
+  CONSTRAINT `type` FOREIGN KEY (`type`) REFERENCES `valid_value` (`ID`) ON DELETE SET NULL ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 
 CREATE TABLE `phone_number` (
@@ -26,9 +26,8 @@ CREATE TABLE `phone_number` (
   `can_publish` tinyint(4) NOT NULL,
   `type` int(11) DEFAULT NULL,
   PRIMARY KEY (`ID`),
-  KEY `type_idx` (`type`),
   KEY `phone_number_type_idx` (`type`),
-  CONSTRAINT `phone_number_type` FOREIGN KEY (`type`) REFERENCES `valid_value` (`ID`) ON DELETE SET NULL
+  CONSTRAINT `phone_number_type` FOREIGN KEY (`type`) REFERENCES `valid_value` (`ID`) ON DELETE SET NULL ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 
 CREATE TABLE `family` (
@@ -38,8 +37,8 @@ CREATE TABLE `family` (
   PRIMARY KEY (`ID`),
   KEY `congregation_ID_idx` (`congregation_ID`),
   KEY `address_ID_idx` (`address_ID`),
-  CONSTRAINT `addr_ID` FOREIGN KEY (`address_ID`) REFERENCES `address` (`ID`),
-  CONSTRAINT `congregation_ID` FOREIGN KEY (`congregation_ID`) REFERENCES `congregation` (`ID`)
+  CONSTRAINT `addr_ID` FOREIGN KEY (`address_ID`) REFERENCES `address` (`ID`) ON DELETE SET NULL ON UPDATE NO ACTION,
+  CONSTRAINT `congregation_ID` FOREIGN KEY (`congregation_ID`) REFERENCES `congregation` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 
 CREATE TABLE `person` (
@@ -54,8 +53,8 @@ CREATE TABLE `person` (
   PRIMARY KEY (`ID`),
   KEY `person_congregation_ID_idx` (`congregation_ID`),
   KEY `person_family_ID_idx` (`family_ID`),
-  CONSTRAINT `person_congregation_ID` FOREIGN KEY (`congregation_ID`) REFERENCES `congregation` (`ID`),
-  CONSTRAINT `person_family_ID` FOREIGN KEY (`family_ID`) REFERENCES `family` (`ID`)
+  CONSTRAINT `person_congregation_ID` FOREIGN KEY (`congregation_ID`) REFERENCES `congregation` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `person_family_ID` FOREIGN KEY (`family_ID`) REFERENCES `family` (`ID`) ON DELETE SET NULL ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 
 ALTER TABLE `church`.`family` 
@@ -74,8 +73,8 @@ CREATE TABLE `person_address` (
   `address_ID` int(11) NOT NULL,
   KEY `pa_address_ID_idx` (`address_ID`),
   KEY `pa_person_ID_idx` (`person_ID`),
-  CONSTRAINT `pa_address_ID` FOREIGN KEY (`address_ID`) REFERENCES `address` (`ID`) ON DELETE CASCADE,
-  CONSTRAINT `pa_person_ID` FOREIGN KEY (`person_ID`) REFERENCES `person` (`ID`) ON DELETE CASCADE
+  CONSTRAINT `pa_address_ID` FOREIGN KEY (`address_ID`) REFERENCES `address` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `pa_person_ID` FOREIGN KEY (`person_ID`) REFERENCES `person` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `person_number` (
@@ -83,8 +82,8 @@ CREATE TABLE `person_number` (
   `number_ID` int(11) NOT NULL,
   KEY `pn_person_id_idx` (`person_ID`),
   KEY `pn_number_id_idx` (`number_ID`),
-  CONSTRAINT `pn_number_id` FOREIGN KEY (`number_ID`) REFERENCES `phone_number` (`ID`) ON DELETE CASCADE,
-  CONSTRAINT `pn_person_id` FOREIGN KEY (`person_ID`) REFERENCES `person` (`ID`) ON DELETE CASCADE
+  CONSTRAINT `pn_number_id` FOREIGN KEY (`number_ID`) REFERENCES `phone_number` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `pn_person_id` FOREIGN KEY (`person_ID`) REFERENCES `person` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `life_event` (
@@ -93,8 +92,12 @@ CREATE TABLE `life_event` (
   `description` varchar(255) NOT NULL,
   `date` datetime DEFAULT NULL,
   `type` int(11) NOT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`ID`),
+  KEY `le_person_ID_idx` (`person_ID`),
+  KEY `le_type_idx` (`type`),
+  CONSTRAINT `le_person_ID` FOREIGN KEY (`person_ID`) REFERENCES `person` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `le_type` FOREIGN KEY (`type`) REFERENCES `valid_value` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 
 CREATE TABLE `group` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
@@ -105,9 +108,9 @@ CREATE TABLE `group` (
   KEY `group_congregation_ID_idx` (`congregation_ID`),
   KEY `group_type_idx` (`type`),
   KEY `group_leader_idx` (`leader`),
-  CONSTRAINT `group_congregation_ID` FOREIGN KEY (`congregation_ID`) REFERENCES `congregation` (`ID`),
-  CONSTRAINT `group_leader` FOREIGN KEY (`leader`) REFERENCES `person` (`ID`),
-  CONSTRAINT `group_type` FOREIGN KEY (`type`) REFERENCES `valid_value` (`ID`)
+  CONSTRAINT `group_congregation_ID` FOREIGN KEY (`congregation_ID`) REFERENCES `congregation` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `group_leader` FOREIGN KEY (`leader`) REFERENCES `person` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `group_type` FOREIGN KEY (`type`) REFERENCES `valid_value` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 
 CREATE TABLE `group_person` (
@@ -115,15 +118,15 @@ CREATE TABLE `group_person` (
   `person_ID` int(11) NOT NULL,
   KEY `gp_group_ID_idx` (`group_ID`),
   KEY `gp_person_ID_idx` (`person_ID`),
-  CONSTRAINT `gp_group_ID` FOREIGN KEY (`group_ID`) REFERENCES `group` (`ID`) ON DELETE CASCADE,
-  CONSTRAINT `gp_person_ID` FOREIGN KEY (`person_ID`) REFERENCES `person` (`ID`) ON DELETE CASCADE
+  CONSTRAINT `gp_group_ID` FOREIGN KEY (`group_ID`) REFERENCES `group` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `gp_person_ID` FOREIGN KEY (`person_ID`) REFERENCES `person` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `room` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `room_number` varchar(255) NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 
 CREATE TABLE `event` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
@@ -137,7 +140,7 @@ CREATE TABLE `event` (
   KEY `event_location_idx` (`location`),
   CONSTRAINT `event_leader` FOREIGN KEY (`leader`) REFERENCES `person` (`ID`) ON DELETE SET NULL ON UPDATE NO ACTION,
   CONSTRAINT `event_location` FOREIGN KEY (`location`) REFERENCES `room` (`ID`) ON DELETE SET NULL ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 
 CREATE TABLE `attendee` (
   `person_ID` int(11) NOT NULL,
@@ -161,5 +164,23 @@ CREATE TABLE `relationship` (
   `person1_ID` int(11) NOT NULL,
   `person2_ID` int(11) NOT NULL,
   `type` int(11) DEFAULT NULL,
-  PRIMARY KEY (`person1_ID`,`person2_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`person1_ID`,`person2_ID`),
+  KEY `relationship_type_idx` (`type`),
+  KEY `person_one_relationship_idx` (`person1_ID`),
+  KEY `person_two_relationship_idx` (`person2_ID`),
+  CONSTRAINT `person_one_relationship` FOREIGN KEY (`person1_ID`) REFERENCES `person` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `person_two_relationship` FOREIGN KEY (`person2_ID`) REFERENCES `person` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `relationship_type` FOREIGN KEY (`type`) REFERENCES `valid_value` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT = 0 DEFAULT CHARSET=latin1;
+
+INSERT INTO `church`.`congregation` SET `name` = "Wilshire Church of Christ";
+
+INSERT INTO `church`.`valid_value` SET `value_group` = "address", `value` = "current";
+INSERT INTO `church`.`valid_value` SET `value_group` = "address", `value` = "old";
+
+INSERT INTO `church`.`valid_value` SET `value_group` = "phone", `value` = "mobile";
+INSERT INTO `church`.`valid_value` SET `value_group` = "phone", `value` = "work";
+INSERT INTO `church`.`valid_value` SET `value_group` = "phone", `value` = "home";
+
+INSERT INTO `church`.`valid_value` SET `value_group` = "relationship", `value` = "spouse";
+INSERT INTO `church`.`valid_value` SET `value_group` = "relationship", `value` = "sibling";
