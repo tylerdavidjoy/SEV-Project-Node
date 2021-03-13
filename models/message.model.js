@@ -162,31 +162,40 @@ function sendEmail(message) {
   var sender_email = "sevtestmail@gmail.com";
   var sender_pass = "Eagles123!";
 
-  //Comma serperated list for multiple receipients
-  var receipient_list = "defendert1@hotmail.com";
+  //List of emails
+  var recipients_emails = ["tyler.david.joy@eagles.oc.edu"];
 
   var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: sender_email,
       pass: sender_pass
-    }
+    },
+    pool: true
   });
   
-  var mailOptions = {
-    from: sender_email,
-    to: receipient_list,
-    subject: message.subject,
-    text: message.message
-  };
-  
-  transporter.sendMail(mailOptions, function(error, info){
-    if (error) {
-      console.log(error);
-    } else {
-      console.log('Email sent: ' + info.response);
-    }
-  });
+  var emails = []
+  //Create emails list
+  for(var i = 0; i < recipients_emails.length; i++)
+  {
+    emails.push(
+      {
+        from: sender_email,
+        to: recipients_emails[i],
+        subject: message.subject,
+        text: message.message
+      }
+    )
+  }
 
-
+  //Pools emails to allow thousands to be sent without being blacklisted as a bot
+  while (transporter.isIdle() && emails.length){
+    transporter.sendMail(emails.shift(), function(error, info){
+      if (error) {
+        console.log(error);
+      } else {
+        console.log('Email sent: ' + info.response);
+      }
+    });
+  }
 }
