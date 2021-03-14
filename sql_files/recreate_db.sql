@@ -50,12 +50,15 @@ CREATE TABLE `person` (
   `employer` varchar(255) DEFAULT NULL,
   `family_ID` int(11) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
+  `gender` enum('male','female','other') NOT NULL,
+  `preferred_name` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   KEY `person_congregation_ID_idx` (`congregation_ID`),
   KEY `person_family_ID_idx` (`family_ID`),
   CONSTRAINT `person_congregation_ID` FOREIGN KEY (`congregation_ID`) REFERENCES `congregation` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `person_family_ID` FOREIGN KEY (`family_ID`) REFERENCES `family` (`ID`) ON DELETE SET NULL ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
 
 ALTER TABLE `church`.`family` 
 ADD COLUMN `head_ID` INT NULL AFTER `address_ID`,
@@ -92,12 +95,14 @@ CREATE TABLE `life_event` (
   `description` varchar(255) NOT NULL,
   `date` datetime DEFAULT NULL,
   `type` int(11) NOT NULL,
+  `visable` tinyint(4) DEFAULT 1,
   PRIMARY KEY (`ID`),
   KEY `le_person_ID_idx` (`person_ID`),
   KEY `le_type_idx` (`type`),
   CONSTRAINT `le_person_ID` FOREIGN KEY (`person_ID`) REFERENCES `person` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `le_type` FOREIGN KEY (`type`) REFERENCES `valid_value` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 
 CREATE TABLE `group` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,

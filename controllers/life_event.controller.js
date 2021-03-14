@@ -14,7 +14,8 @@ exports.create = (req, res) => {
       person_ID: req.body.person_ID,
       description: req.body.description,
       date: req.body.date,
-      type: req.body.type
+      type: req.body.type,
+      visable: req.body.visable
     });
 
     Life_Event.create(life_event, (err, data) => {

@@ -5,11 +5,12 @@ const Life_Event = function(life_event) {
     this.person_ID = life_event.person_ID,
     this.description = life_event.description,
     this.date = life_event.date,
-    this.type = life_event.type
+    this.type = life_event.type,
+    this.visable = life_event.visable
 }
 
 Life_Event.create = (life_event, result) => {
-    sql.query(`INSERT INTO life_event VALUES ("",${life_event.person_ID}, "${life_event.description}", "${life_event.date}", ${life_event.type})`, (err, res) => {
+    sql.query(`INSERT INTO life_event VALUES ("",${life_event.person_ID}, "${life_event.description}", "${life_event.date}", ${life_event.type}, ${life_event.visable})`, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
@@ -131,7 +132,7 @@ Life_Event.findbydate = (start,end, result) => {
 
 
 Life_Event.updateById = (id, life_e, result) => {
-    sql.query(`UPDATE life_event SET person_ID = "${life_e.person_ID}", description = "${life_e.description}", date = "${life_e.date}", type = ${life_e.type} WHERE ID = "${id}"`,(err, res) => {
+    sql.query(`UPDATE life_event SET person_ID = "${life_e.person_ID}", description = "${life_e.description}", date = "${life_e.date}", type = ${life_e.type}, visable = ${life_e.visable} WHERE ID = "${id}"`,(err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
