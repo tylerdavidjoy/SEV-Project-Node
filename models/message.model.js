@@ -12,7 +12,7 @@ const Message = function (message) {
 }
 
 Message.create = (message, result) => {
-  sql.query(`INSERT INTO message VALUES ("", "${message.suject}", "${message.message}", ${message.type}, "${message.timesent}", ${message.receipient}, ${message.receipient_type} )`, (err, res) => {
+  sql.query(`INSERT INTO message VALUES ("", "${message.subject}", "${message.message}", ${message.type}, "${message.timesent}", ${message.receipient}, ${message.receipient_type} )`, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);
@@ -158,12 +158,68 @@ module.exports = Message;
 //Email
 function sendEmail(message) {
 
+  //List of emails
+  var recipients_emails = [];
+  var recipientType = null;
+
+  sql.query(`SELECT * FROM valid_value WHERE valid_value.id = ${message.receipient_type}`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found type: ", res[0].value);
+      this.recipientType = res[0].value;
+
+
+      if(res[0].value == "congregation")
+        {
+        sql.query(`SELECT email FROM person WHERE person.congregation_ID = ${message.receipient}`, (err, res) => {
+          if (err) {
+            console.log("error: ", err);
+            return;
+          }
+      
+          if (res.length) {
+            console.log("found emails: ", res);
+            for(var i = 0; i < res.length; i++)
+            {
+              recipients_emails.push(res[i].email);
+            }
+            sendMail2(message, recipients_emails);
+          }
+        })
+      }
+
+      else
+      {
+        sql.query(`SELECT email FROM person WHERE person.id IN ( SELECT person_id FROM group_person WHERE group_ID = ${message.receipient});`, (err, res) => {
+          if (err) {
+            console.log("error: ", err);
+            return;
+          }
+      
+          if (res.length) {
+            console.log("found emails: ", res);
+            for(var i = 0; i < res.length; i++)
+            {
+              recipients_emails.push(res[i].email);
+            }
+            sendMail2(message, recipients_emails);
+          }
+        })
+      }
+    }
+  })
+}
+
+
+function sendMail2(message, recipients_emails)
+{
   //Test email for sending emails
   var sender_email = "sevtestmail@gmail.com";
   var sender_pass = "Eagles123!";
-
-  //List of emails
-  var recipients_emails = ["tyler.david.joy@eagles.oc.edu"];
 
   var transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -178,14 +234,17 @@ function sendEmail(message) {
   //Create emails list
   for(var i = 0; i < recipients_emails.length; i++)
   {
-    emails.push(
-      {
-        from: sender_email,
-        to: recipients_emails[i],
-        subject: message.subject,
-        text: message.message
-      }
-    )
+    if(recipients_emails[i] != null && recipients_emails[i] != "null" )
+    {
+      emails.push(
+        {
+          from: sender_email,
+          to: recipients_emails[i],
+          subject: message.subject,
+          text: message.message
+        }
+      )
+    }
   }
 
   //Pools emails to allow thousands to be sent without being blacklisted as a bot
