@@ -13,7 +13,8 @@ exports.create = (req, res) => {
     const group = new Group({
       type: req.body.type,
       leader: req.body.leader,
-      congregation_ID: req.body.congregation_ID
+      congregation_ID: req.body.congregation_ID,
+      name: req.body.name
     });
 
     Group.create(group, (err, data) => {
@@ -30,9 +31,10 @@ exports.find = (req, res) => {
     const id = req.query.id;
     const person_ID = req.query.person_ID;
     const get_members = req.query.get_members;
+    const name = req.query.name;
 
     // if this is a GET ALL call
-    if(id == null && person_ID == null)
+    if(id == null && person_ID == null && name == null)
     Group.findAll((err, data) => {
         if (err)
           res.status(500).send({
@@ -54,6 +56,19 @@ exports.find = (req, res) => {
           }
           else res.send(data);
       });
+
+      // if this is a GET by name call
+      else if(id == null && get_members == null && name != null)
+      Group.findByName(name, (err, data) => {
+            if (err)
+            {
+              res.status(500).send({
+                message:
+                  err.message || "Internal server error - get group."
+              });
+            }
+            else res.send(data);
+        });
 
     // if this is a GET by Person call
     else if(person_ID != null)
