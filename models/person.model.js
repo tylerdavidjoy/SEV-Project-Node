@@ -14,7 +14,8 @@ const Person = function (person) {
 }
 
 Person.create = (person, result) => {
-  if(person.gender != 'male' || person.gender != 'female' || person.gender != 'other' ){
+  if(person.gender != 'male' && person.gender != 'female' && person.gender != 'other' ){
+    console.log(person.gender);
     result("INCORRECT GENDER",null);
     return;
   }
