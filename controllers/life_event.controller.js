@@ -15,7 +15,7 @@ exports.create = (req, res) => {
       description: req.body.description,
       date: req.body.date,
       type: req.body.type,
-      visable: req.body.visable
+      visible: req.body.visible
     });
 
     Life_Event.create(life_event, (err, data) => {

@@ -95,7 +95,7 @@ CREATE TABLE `life_event` (
   `description` varchar(255) NOT NULL,
   `date` datetime DEFAULT NULL,
   `type` int(11) NOT NULL,
-  `visable` tinyint(4) DEFAULT 1,
+  `visible` tinyint(4) DEFAULT 1,
   PRIMARY KEY (`ID`),
   KEY `le_person_ID_idx` (`person_ID`),
   KEY `le_type_idx` (`type`),
