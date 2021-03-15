@@ -6,10 +6,11 @@ const Group = function(group) {
     this.type = group.type;
     this.leader = group.leader;
     this.congregation_ID = group.congregation_ID;
+    this.name = group.name;
 }
 
 Group.create = (group, result) => {
-  sql.query(`INSERT INTO church.group VALUES ("",${group.type}, ${group.leader}, ${group.congregation_ID})`, (err, res) => {
+  sql.query(`INSERT INTO church.group VALUES ("", ${group.type}, ${group.leader}, ${group.congregation_ID}, "${group.name}")`, (err, res) => {
       if (err) {
           console.log("error: ", err);
           result(err, null);
@@ -49,6 +50,25 @@ Group.findById = (id, result) => {
       // not found congregation with the id
       result({ kind: "not_found" }, null);
     })
+}
+
+Group.findByName = (name, result) => {
+  sql.query(`SELECT * FROM church.group WHERE church.group.name = "${name}"`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found groups: ", res[0]);
+      result(null, res[0]);
+      return;
+    }
+
+    // not found congregation with the id
+    result({ kind: "not_found" }, null);
+  })
 }
 
 Group.findByPerson = (person_ID, result) => {
@@ -91,7 +111,7 @@ Group.findMembers = (id, result) => {
 
 
 Group.updateById = (id, new_group, result) => {
-  sql.query(`UPDATE church.group SET type = "${new_group.type}", leader = ${new_group.leader}, congregation_ID = ${new_group.congregation_ID} WHERE ID = "${id}"`,(err, res) => {
+  sql.query(`UPDATE church.group SET type = "${new_group.type}", leader = ${new_group.leader}, congregation_ID = ${new_group.congregation_ID}, name = "${new_group.name}" WHERE ID = "${id}"`,(err, res) => {
       if (err) {
           console.log("error: ", err);
           result(err, null);

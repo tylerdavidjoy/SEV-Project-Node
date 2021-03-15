@@ -17,7 +17,9 @@ exports.create = (req, res) => {
       occupation: req.body.occupation,
       employer: req.body.employer,
       family_ID: req.body.family_ID,
-      email: req.body.email
+      email: req.body.email,
+      gender: req.body.gender,
+      preferred_name: req.body.preferred_name
     });
 
     Person.create(person, (err, data) => {
@@ -89,7 +91,6 @@ exports.update = (req, res) => {
     });
 }
 
-//NEEDS TO BE UPDATED TO DELETE ALL ASSOCIATED INFO LATER ON
 exports.delete = (req,res) => {
     const id = req.query.id;
 
