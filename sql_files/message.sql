@@ -1,5 +1,6 @@
 CREATE TABLE `message` (
-  `ID` int(11) NOT NULL,
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `subject` varchar(45) NOT NULL,
   `message` varchar(3000) CHARACTER SET utf8mb4 NOT NULL,
   `type` int(11) NOT NULL,
   `time_sent` datetime NOT NULL,
@@ -8,4 +9,4 @@ CREATE TABLE `message` (
   PRIMARY KEY (`ID`),
   KEY `message_type_idx` (`type`),
   CONSTRAINT `message_type` FOREIGN KEY (`type`) REFERENCES `valid_value` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
