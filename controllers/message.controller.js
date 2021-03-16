@@ -114,7 +114,7 @@ exports.update = (req, res) => {
                 message: "Error updating message with id " + req.query.id
             });
         } else {
-          if(resend_message) //add something to determine if its an email or text
+          if(req.query.resend_message == 1) //add something to determine if its an email or text
           {
             Message.sendEmail(new Message(req.body))
           }

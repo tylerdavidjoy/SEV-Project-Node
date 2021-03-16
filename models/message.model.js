@@ -156,7 +156,7 @@ module.exports = Message;
 
 
 //Email
-function sendEmail(message) {
+Message.sendEmail = (message) => {
 
   //List of emails
   var recipients_emails = [];
