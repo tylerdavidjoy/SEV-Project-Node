@@ -195,6 +195,13 @@ CREATE TABLE `message` (
   CONSTRAINT `message_type` FOREIGN KEY (`type`) REFERENCES `valid_value` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 
+CREATE TABLE `person_involvement` (
+  `person_ID` int(11) NOT NULL,
+  `involvement_ID` int(11) NOT NULL,
+  KEY `pi_person_ID_idx` (`person_ID`),
+  KEY `pi_involvement_ID_idx` (`involvement_ID`),
+  CONSTRAINT `pi_involvement_ID` FOREIGN KEY (`involvement_ID`) REFERENCES `valid_value` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `pi_person_ID` FOREIGN KEY (`person_ID`) REFERENCES `person` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION
 CREATE TABLE `person_hobby` (
   `person_ID` int(11) NOT NULL,
   `hobby_ID` int(11) NOT NULL,
@@ -215,3 +222,15 @@ INSERT INTO `church`.`valid_value` SET `value_group` = "phone", `value` = "home"
 
 INSERT INTO `church`.`valid_value` SET `value_group` = "relationship", `value` = "spouse";
 INSERT INTO `church`.`valid_value` SET `value_group` = "relationship", `value` = "sibling";
+
+INSERT INTO `church`.`valid_value` SET `value_group` = "involvement", `value` = "adult education";
+INSERT INTO `church`.`valid_value` SET `value_group` = "involvement", `value` = "college education";
+INSERT INTO `church`.`valid_value` SET `value_group` = "involvement", `value` = "youth group";
+INSERT INTO `church`.`valid_value` SET `value_group` = "involvement", `value` = "primary education";
+INSERT INTO `church`.`valid_value` SET `value_group` = "involvement", `value` = "children's education";
+INSERT INTO `church`.`valid_value` SET `value_group` = "involvement", `value` = "rainbow village";
+INSERT INTO `church`.`valid_value` SET `value_group` = "involvement", `value` = "vacation bible school";
+INSERT INTO `church`.`valid_value` SET `value_group` = "involvement", `value` = "family life groups";
+INSERT INTO `church`.`valid_value` SET `value_group` = "involvement", `value` = "visitation";
+INSERT INTO `church`.`valid_value` SET `value_group` = "involvement", `value` = "communion preparation";
+INSERT INTO `church`.`valid_value` SET `value_group` = "involvement", `value` = "worship leadership";
