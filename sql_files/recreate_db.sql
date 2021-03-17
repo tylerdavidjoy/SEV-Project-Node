@@ -208,3 +208,15 @@ INSERT INTO `church`.`valid_value` SET `value_group` = "phone", `value` = "home"
 
 INSERT INTO `church`.`valid_value` SET `value_group` = "relationship", `value` = "spouse";
 INSERT INTO `church`.`valid_value` SET `value_group` = "relationship", `value` = "sibling";
+
+INSERT INTO `church`.`valid_value` SET `value_group` = "involvement", `value` = "adult education";
+INSERT INTO `church`.`valid_value` SET `value_group` = "involvement", `value` = "college education";
+INSERT INTO `church`.`valid_value` SET `value_group` = "involvement", `value` = "youth group";
+INSERT INTO `church`.`valid_value` SET `value_group` = "involvement", `value` = "primary education";
+INSERT INTO `church`.`valid_value` SET `value_group` = "involvement", `value` = "children's education";
+INSERT INTO `church`.`valid_value` SET `value_group` = "involvement", `value` = "rainbow village";
+INSERT INTO `church`.`valid_value` SET `value_group` = "involvement", `value` = "vacation bible school";
+INSERT INTO `church`.`valid_value` SET `value_group` = "involvement", `value` = "family life groups";
+INSERT INTO `church`.`valid_value` SET `value_group` = "involvement", `value` = "visitation";
+INSERT INTO `church`.`valid_value` SET `value_group` = "involvement", `value` = "communion preparation";
+INSERT INTO `church`.`valid_value` SET `value_group` = "involvement", `value` = "worship leadership";
