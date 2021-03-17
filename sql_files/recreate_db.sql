@@ -195,7 +195,14 @@ CREATE TABLE `message` (
   CONSTRAINT `message_type` FOREIGN KEY (`type`) REFERENCES `valid_value` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 
-
+CREATE TABLE `person_ministry` (
+  `person_ID` int(11) NOT NULL,
+  `ministry_ID` int(11) NOT NULL,
+  KEY `pm_person_ID_idx` (`person_ID`),
+  KEY `pm_ministry_ID_idx` (`ministry_ID`),
+  CONSTRAINT `pm_ministry_ID` FOREIGN KEY (`ministry_ID`) REFERENCES `valid_value` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `pm_person_ID` FOREIGN KEY (`person_ID`) REFERENCES `person` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `church`.`congregation` SET `name` = "Wilshire Church of Christ";
 
