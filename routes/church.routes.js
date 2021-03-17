@@ -17,6 +17,8 @@ module.exports = app => {
     const relationship = require("../controllers/relationship.controller.js");
     const message = require("../controllers/message.controller.js");
     const person_ministry = require("../controllers/person_ministry.controller.js");
+    const person_involvement = require("../controllers/person_involvement.controller.js");
+    const person_hobby = require("../controllers/person_hobby.controller.js");
 
     // ----------------------------------
     // valid_value Table API
@@ -294,4 +296,30 @@ module.exports = app => {
 
     // Delete a person_ministry
     app.delete("/person_ministry", person_ministry.delete);
+    
+    // ----------------------------------
+    // Person_Involvement Table API
+    // ----------------------------------
+
+    //Create a new person_involvement
+    app.post("/person_involvement", person_involvement.create);
+
+    // Find person_involvement(s) by a parameter
+    app.get("/person_involvement", person_involvement.find);
+
+    // Delete a person_involvement
+    app.delete("/person_involvement", person_involvement.delete);
+  
+    // ----------------------------------
+    // Person_Hobby Table API
+    // ----------------------------------
+
+    //Create a new person_hobby
+    app.post("/person_hobby", person_hobby.create);
+
+    // Find person_hobby(s) by a parameter
+    app.get("/person_hobby", person_hobby.find);
+
+    // Delete a person_hobby
+    app.delete("/person_hobby", person_hobby.delete);
 };
