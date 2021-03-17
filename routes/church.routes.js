@@ -16,6 +16,7 @@ module.exports = app => {
     const attendee = require("../controllers/attendee.controller.js");
     const relationship = require("../controllers/relationship.controller.js");
     const message = require("../controllers/message.controller.js");
+    const person_hobby = require("../controllers/person_hobby.controller.js");
 
     // ----------------------------------
     // valid_value Table API
@@ -280,4 +281,17 @@ module.exports = app => {
 
     // Delete a message
     app.delete("/message", message.delete);
+
+    // ----------------------------------
+    // Person_Hobby Table API
+    // ----------------------------------
+
+    //Create a new person_hobby
+    app.post("/person_hobby", person_hobby.create);
+
+    // Find person_hobby(s) by a parameter
+    app.get("/person_hobby", person_hobby.find);
+
+    // Delete a person_hobby
+    app.delete("/person_hobby", person_hobby.delete);
 };
