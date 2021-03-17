@@ -208,3 +208,15 @@ INSERT INTO `church`.`valid_value` SET `value_group` = "phone", `value` = "home"
 
 INSERT INTO `church`.`valid_value` SET `value_group` = "relationship", `value` = "spouse";
 INSERT INTO `church`.`valid_value` SET `value_group` = "relationship", `value` = "sibling";
+
+INSERT INTO `church`.`valid_value` SET `value_group` = "ministry", `value` = "men's ministry";
+INSERT INTO `church`.`valid_value` SET `value_group` = "ministry", `value` = "women's ministry";
+INSERT INTO `church`.`valid_value` SET `value_group` = "ministry", `value` = "college ministry";
+INSERT INTO `church`.`valid_value` SET `value_group` = "ministry", `value` = "youth ministry";
+INSERT INTO `church`.`valid_value` SET `value_group` = "ministry", `value` = "personal evangelism";
+INSERT INTO `church`.`valid_value` SET `value_group` = "ministry", `value` = "world bible school";
+INSERT INTO `church`.`valid_value` SET `value_group` = "ministry", `value` = "radio ministry";
+INSERT INTO `church`.`valid_value` SET `value_group` = "ministry", `value` = "transportation";
+INSERT INTO `church`.`valid_value` SET `value_group` = "ministry", `value` = "building and grounds";
+INSERT INTO `church`.`valid_value` SET `value_group` = "ministry", `value` = "advertising";
+INSERT INTO `church`.`valid_value` SET `value_group` = "ministry", `value` = "door greeters";
