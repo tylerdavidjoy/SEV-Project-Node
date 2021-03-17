@@ -195,6 +195,13 @@ CREATE TABLE `message` (
   CONSTRAINT `message_type` FOREIGN KEY (`type`) REFERENCES `valid_value` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 
+CREATE TABLE `person_ministry` (
+  `person_ID` int(11) NOT NULL,
+  `ministry_ID` int(11) NOT NULL,
+  KEY `pm_person_ID_idx` (`person_ID`),
+  KEY `pm_ministry_ID_idx` (`ministry_ID`),
+  CONSTRAINT `pm_ministry_ID` FOREIGN KEY (`ministry_ID`) REFERENCES `valid_value` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `pm_person_ID` FOREIGN KEY (`person_ID`) REFERENCES `person` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION
 CREATE TABLE `person_involvement` (
   `person_ID` int(11) NOT NULL,
   `involvement_ID` int(11) NOT NULL,
@@ -223,6 +230,17 @@ INSERT INTO `church`.`valid_value` SET `value_group` = "phone", `value` = "home"
 INSERT INTO `church`.`valid_value` SET `value_group` = "relationship", `value` = "spouse";
 INSERT INTO `church`.`valid_value` SET `value_group` = "relationship", `value` = "sibling";
 
+INSERT INTO `church`.`valid_value` SET `value_group` = "ministry", `value` = "men's ministry";
+INSERT INTO `church`.`valid_value` SET `value_group` = "ministry", `value` = "women's ministry";
+INSERT INTO `church`.`valid_value` SET `value_group` = "ministry", `value` = "college ministry";
+INSERT INTO `church`.`valid_value` SET `value_group` = "ministry", `value` = "youth ministry";
+INSERT INTO `church`.`valid_value` SET `value_group` = "ministry", `value` = "personal evangelism";
+INSERT INTO `church`.`valid_value` SET `value_group` = "ministry", `value` = "world bible school";
+INSERT INTO `church`.`valid_value` SET `value_group` = "ministry", `value` = "radio ministry";
+INSERT INTO `church`.`valid_value` SET `value_group` = "ministry", `value` = "transportation";
+INSERT INTO `church`.`valid_value` SET `value_group` = "ministry", `value` = "building and grounds";
+INSERT INTO `church`.`valid_value` SET `value_group` = "ministry", `value` = "advertising";
+INSERT INTO `church`.`valid_value` SET `value_group` = "ministry", `value` = "door greeters";
 INSERT INTO `church`.`valid_value` SET `value_group` = "involvement", `value` = "adult education";
 INSERT INTO `church`.`valid_value` SET `value_group` = "involvement", `value` = "college education";
 INSERT INTO `church`.`valid_value` SET `value_group` = "involvement", `value` = "youth group";
