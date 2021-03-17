@@ -7,11 +7,14 @@ CREATE TABLE `person` (
   `employer` varchar(255) DEFAULT NULL,
   `family_ID` int(11) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
-  `gender` enum('male','female','other') NOT NULL,
+  `gender` enum('male','female','other') NOT NULL DEFAULT 'other',
   `preferred_name` varchar(45) DEFAULT NULL,
+  `role` int(11) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   KEY `person_congregation_ID_idx` (`congregation_ID`),
   KEY `person_family_ID_idx` (`family_ID`),
+  KEY `person_role_idx` (`role`),
   CONSTRAINT `person_congregation_ID` FOREIGN KEY (`congregation_ID`) REFERENCES `congregation` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `person_family_ID` FOREIGN KEY (`family_ID`) REFERENCES `family` (`ID`) ON DELETE SET NULL ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+  CONSTRAINT `person_family_ID` FOREIGN KEY (`family_ID`) REFERENCES `family` (`ID`) ON DELETE SET NULL ON UPDATE NO ACTION,
+  CONSTRAINT `person_role` FOREIGN KEY (`role`) REFERENCES `valid_value` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
