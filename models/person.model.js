@@ -11,6 +11,7 @@ const Person = function (person) {
   this.email = person.email;
   this.gender = person.gender;
   this.preferred_name = person.preferred_name;
+  this.role = person.role;
 }
 
 Person.create = (person, result) => {
@@ -21,7 +22,7 @@ Person.create = (person, result) => {
   }
 
   sql.query(`INSERT INTO person VALUES ("", ${person.congregation_ID}, "${person.f_name}", "${person.l_name}", "${person.occupation}", 
-  "${person.employer}", ${person.family_ID}, "${person.email}", "${person.gender}", "${person.preferred_name}")`, (err, res) => {
+  "${person.employer}", ${person.family_ID}, "${person.email}", "${person.gender}", "${person.preferred_name}", ${person.role})`, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);
@@ -85,7 +86,7 @@ Person.findByEmail = (email, result) => {
 
 Person.updateById = (id, person, result) => {
   sql.query(`UPDATE person SET congregation_ID = ${person.congregation_ID}, f_name = "${person.f_name}", l_name = "${person.l_name}", 
-  occupation = "${person.occupation}", employer = "${person.employer}", family_ID = ${person.family_ID}, email = "${person.email}", gender = "${person.gender}", preferred_name = "${person.preferred_name}" 
+  occupation = "${person.occupation}", employer = "${person.employer}", family_ID = ${person.family_ID}, email = "${person.email}", gender = "${person.gender}", preferred_name = "${person.preferred_name}", role = ${person.role} 
   WHERE ID = "${id}"`, (err, res) => {
     if (err) {
       console.log("error: ", err);

@@ -19,7 +19,8 @@ exports.create = (req, res) => {
       family_ID: req.body.family_ID,
       email: req.body.email,
       gender: req.body.gender,
-      preferred_name: req.body.preferred_name
+      preferred_name: req.body.preferred_name,
+      role: req.body.role
     });
 
     Person.create(person, (err, data) => {
