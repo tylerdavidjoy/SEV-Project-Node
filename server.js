@@ -10,6 +10,7 @@ const bodyParser = require("body-parser");
 const mysql = require('mysql');
 
 const cors = require('cors');
+const fileUpload = require('express-fileupload');
 
 
 
@@ -24,6 +25,9 @@ app.use(cors(corsOptions));
 
 app.use(bodyParser.urlencoded({ extended : true }));
 app.use(bodyParser.json());
+
+app.use(express.static('public'));
+app.use(fileUpload());
 
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to The Church Management System." });
