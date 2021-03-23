@@ -34,9 +34,10 @@ exports.find = (req, res) => {
     const type = req.query.type;
     const date_start = req.query.date_start;
     const date_end = req.query.date_end;
+    const report = req.query.report;
 
     // if this is a GET ALL call
-    if(id == null && person_id == null && type == null && date_start == null)
+    if(id == null && person_id == null && type == null && date_start == null && report == null)
     Life_Event.findAll((err, data) => {
         if (err)
           res.status(500).send({
@@ -86,8 +87,21 @@ exports.find = (req, res) => {
       });
 
     //Get all of 1 type for a date range
-    else if(type != null && date_start !=null && date_end != null)
+    else if(type != null && date_start !=null && date_end != null && report == null)
     Life_Event.findbydateType(type,date_start,date_end, (err, data) => {
+          if (err)
+          {
+            res.status(500).send({
+              message:
+                err.message || "Internal server error - get life_event."
+            });
+          }
+          else res.send(data);
+      });
+
+    //Generate report
+    else if(report != null)
+    Life_Event.generateReport(type,date_start,date_end, (err, data) => {
           if (err)
           {
             res.status(500).send({
