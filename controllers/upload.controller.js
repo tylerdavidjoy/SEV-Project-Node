@@ -9,6 +9,7 @@ exports.uploadImage = (req, res) => {
     });
     }
 
+
     Upload.uploadImage(req, (err, data) => {
       if (err)
         res.status(500).send({
