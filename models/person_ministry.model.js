@@ -38,15 +38,8 @@ Person_Ministry.findByPersonId = (person_id, result) => {
             result(err, null);
             return;
         }
-
-        if (res.length) {
-            console.log("found person_ministries: ", res);
-            result(null, res);
-            return;
-        }
-
-        // not found person_ministry with the person_id
-        result({ kind: "not_found" }, null);
+        console.log("found person_ministries: ", res);
+        result(null, res);
     })
 }
 
@@ -58,15 +51,8 @@ Person_Ministry.findByMinistryId = (ministry_id, result) => {
             result(err, null);
             return;
         }
-
-        if (res.length) {
-            console.log("found person_ministrys: ", res);
-            result(null, res);
-            return;
-        }
-
-        // not found person_ministry with the ministry_id
-        result({ kind: "not_found" }, null);
+        console.log("found person_ministries: ", res);
+        result(null, res);
     })
 }
 

@@ -33,7 +33,7 @@ Person_Hobby.createWithNewHobby = (person_ID, newHobby, result) => {
         })
     })
     hobbyPromise.then(
-        function(response) {
+        function (response) {
             var p_h;
             sql.query(`INSERT INTO church.person_hobby SET person_ID = "${person_ID}", hobby_ID = "${response}"`, (err, res) => {
                 if (err) {
@@ -49,7 +49,7 @@ Person_Hobby.createWithNewHobby = (person_ID, newHobby, result) => {
                 }
             })
         },
-        function(error) {
+        function (error) {
             result(error, null);
         }
     )
@@ -75,15 +75,8 @@ Person_Hobby.findByPersonId = (person_id, result) => {
             result(err, null);
             return;
         }
-
-        if (res.length) {
-            console.log("found person_ministries: ", res);
-            result(null, res);
-            return;
-        }
-
-        // not found person_hobby with the person_id
-        result({ kind: "not_found" }, null);
+        console.log("found person_ministries: ", res);
+        result(null, res);
     })
 }
 
@@ -95,15 +88,8 @@ Person_Hobby.findByHobbyId = (hobby_id, result) => {
             result(err, null);
             return;
         }
-
-        if (res.length) {
-            console.log("found person_hobbies: ", res);
-            result(null, res);
-            return;
-        }
-
-        // not found person_hobby with the hobby_id
-        result({ kind: "not_found" }, null);
+        console.log("found person_hobbies: ", res);
+        result(null, res);
     })
 }
 

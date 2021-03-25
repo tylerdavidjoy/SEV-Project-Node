@@ -38,15 +38,9 @@ Person_Involvement.findByPersonId = (person_id, result) => {
             result(err, null);
             return;
         }
+        console.log("found person_involvements: ", res);
+        result(null, res);
 
-        if (res.length) {
-            console.log("found person_involvements: ", res);
-            result(null, res);
-            return;
-        }
-
-        // not found person_involvement with the person_id
-        result({ kind: "not_found" }, null);
     })
 }
 
@@ -59,14 +53,8 @@ Person_Involvement.findByInvolvementId = (involvement_id, result) => {
             return;
         }
 
-        if (res.length) {
-            console.log("found person_involvements: ", res);
-            result(null, res);
-            return;
-        }
-
-        // not found person_involvement with the involvement_id
-        result({ kind: "not_found" }, null);
+        console.log("found person_involvements: ", res);
+        result(null, res);
     })
 }
 
