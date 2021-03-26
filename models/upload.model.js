@@ -1,8 +1,9 @@
 const sql = require("./db.js");
 const path = require("path");
-const defaultImage = "default.png";
+const { v4: uuidv4 } = require('uuid');
+const defaultImage = "default.jpg";
 // Constructor
-const Upload = function() {}
+const Upload = function () { }
 
 Upload.uploadImage = (req, result) => {
     const myFile = req.files.file;
@@ -10,89 +11,111 @@ Upload.uploadImage = (req, result) => {
     const family_ID = req.query.family_ID;
     let entity;
     let entity_ID;
-    
-    if(person_ID == null && family_ID != null) {
-        entity = "family";
-        entity_ID = family_ID;
-    }
-    else if (person_ID != null && family_ID == null) {
-        entity = "person";
-        entity_ID = person_ID;
-    }
-    else {
-        result({msg: "provide an ID for either person or family"}, null);
-        return;
-    }
+    // if(person_ID == null && family_ID != null) {
+    //     entity = "family";
+    //     entity_ID = family_ID;
+    // }
+    // else if (person_ID != null && family_ID == null) {
+    //     entity = "person";
+    //     entity_ID = person_ID;
+    // }
+    // else {
+    //     result("provide an ID for either person or family", null);
+    //     return;
+    // }
+    entity = "person";
+    entity_ID = 2;
 
-    const prevImage = getImageFor(entity, entity_ID);
-    if(prevImage == null) {
-        result({msg: "Error getting old image in backend - this should never happen (theoretically)"}, null);
-        return;
-    }
-
-    if(prevImage != defaultImage)
-        deleteOldImage(entity, entity_ID);
-
-    
-
-    let imagePromise = new Promise(function (imageResolve, imageReject) {
-        //  mv() method places the file inside public directory
-        let filePath = path.resolve("public/images/", myFile.name);
-        myFile.mv(filePath, function (err) {
-            if(err)
-                imageReject(err)
-            else
-                imageResolve(null)
-            
-        });
+    let getImagePromise = new Promise(function (getImageResolve, getImageReject) {
+        // Get the previous image
+        sql.query(`SELECT image FROM ${entity} WHERE ID = ${entity_ID}`, (err, res) => {
+            if (err) {
+                console.log("error: ", err);
+                getImageReject(err)
+            }
+            getImageResolve(res);
+        })
     })
-    imagePromise.then(
-        function(response) {
-            console.log("resolve");
-            sql.query(`UPDATE "${entity}" SET image = "${myFile.name}" WHERE ID = "${entity_ID}"`, (err, res) => {
-                if (err) {
-                  console.log("error: ", err);
-                  result({msg: err}, null);
-                  return;
-                }
-                result(null, {name: myFile.name, path: `/${myFile.name}`});
+    getImagePromise.then(
+        function (response) {
+            if (response == null) {
+                result("Error getting old image in backend - this should never happen (theoretically)", null);
+                console.log("Error getting old image in backend - this should never happen (theoretically)");
+                return;
+            }
+            console.log("prev image: " + response);
+
+            // Delete previous image if it is not the default image
+            if (response != defaultImage)
+                deleteImage(response);
+
+            // Generate unique name or new image
+            let imageName = uuidv4() + ".jpg";
+            console.log(imageName);
+            
+            // Create new image
+            let imagePromise = new Promise(function (imageResolve, imageReject) {
+                //  mv() method places the file inside public/images/ directory
+                let filePath = path.resolve("public/images/", imageName);
+                myFile.mv(filePath, function (err) {
+                    if (err)
+                        imageReject(err)
+                    else
+                        imageResolve(null)
+
+                });
             })
+            imagePromise.then(
+                function (response) {
+                    // Update entity image reference to new image
+                    sql.query(`UPDATE ${entity} SET image = "${imageName}" WHERE ID = ${entity_ID}`, (err, res) => {
+                        if (err) {
+                            console.log("error: ", err);
+                            result(err, null);
+                            return;
+                        }
+                        result(null, { name: imageName, path: `/${imageName}` });
+                    })
+                },
+                function (error) {
+                    console.log(error);
+                    result(error, null);
+                }
+            )
         },
-        function(error) {
-            console.log("reject");
-            console.log(error);
-            result({ msg: error }, null);
-        }
+        function (error) { }
     )
 };
 
-function getImageFor(entity, entity_ID)
-{
-    let result;
-    let getPromise = new Promise(function(getResolve, getReject) {
-        sql.query(`SELECT image FROM "${entity}" WHERE image = "${entity_ID}"`, (err, res) => {
-            if (err) {
-              console.log("error: ", err);
-              getReject(err)
-            }
-            getResolve(res);
-        })
 
-    });
-    getPromise.then(
-        function(response) {
-            result = response;
-        },
-        function(error) {
-            result = null;
-        }
-    );
-    return result;
-};
+// function getImage(entity, entity_ID) {
+//     let result;
+//     let entityPromise = new Promise(function (entityResolve, entityReject) {
+//         sql.query(`SELECT image FROM ${entity} WHERE ID = ${entity_ID}`, (err, res) => {
+//             if (err) {
+//                 console.log("error: ", err);
+//                 entityReject(err)
+//             }
+//             entityResolve(res);
+//         })
 
-function deleteOldImage(entity, entity_ID)
-{
+//     });
+//     entityPromise.then(
+//         function (response) {
+//             console.log(response);
+//             return response.image;
+//         },
+//         function (error) {
+//             return null;
+//         }
+//     );
+//     console.log("return");
+// };
+
+function deleteImage(entity_ID) {
+    console.log("delete image function");
     //IMPLEMENT ME
+    return;
 }
 
 module.exports = Upload;
