@@ -31,6 +31,7 @@ exports.find = (req, res) => {
   const person_ID = req.query.person_ID;
   const isGetPersons = req.query.isGetPersons;
   const isGetHeadOfFamily = req.query.isGetHeadOfFamily;
+  const isGetNameList = req.query.isGetNameList;
 
   // if this is a GET ALL call
   if (id == null && person_ID == null)
@@ -74,6 +75,17 @@ exports.find = (req, res) => {
       }
       else res.send(data);
     })
+  else if (isGetNameList != null) {
+    Family.findNameList((err, data) => {
+      if (err) {
+        res.status(500).send({
+          message:
+            err.message || "Internal server error - get head of family."
+        });
+      }
+      else res.send(data);
+    })
+  }
   else
     Family.findFamilyForPerson(person_ID, (err, data) => {
       if (err) {

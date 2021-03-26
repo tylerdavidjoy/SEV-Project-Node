@@ -76,6 +76,18 @@ Family.findHeadOfFamily = (id, result) => {
   })
 }
 
+Family.findNameList = result => {
+  //IMPLEMENT ME
+  sql.query(``, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+    result(null, res);
+  })
+}
+
 Family.findFamilyForPerson = (person_ID, result) => {
   sql.query(`SELECT * FROM family WHERE family.ID IN (SELECT family_ID FROM person WHERE person.ID = "${person_ID}")`, (err, res) => {
     if (err) {
