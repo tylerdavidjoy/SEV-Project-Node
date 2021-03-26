@@ -19,6 +19,7 @@ module.exports = app => {
     const person_ministry = require("../controllers/person_ministry.controller.js");
     const person_involvement = require("../controllers/person_involvement.controller.js");
     const person_hobby = require("../controllers/person_hobby.controller.js");
+    const upload = require("../controllers/upload.controller.js");
 
     // ----------------------------------
     // valid_value Table API
@@ -322,4 +323,10 @@ module.exports = app => {
 
     // Delete a person_hobby
     app.delete("/person_hobby", person_hobby.delete);
+
+    // ----------------------------------
+    // Upload Table API
+    // ----------------------------------
+
+    app.post("/upload", upload.uploadImage);
 };
