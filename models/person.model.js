@@ -84,6 +84,19 @@ Person.findByEmail = (email, result) => {
   })
 }
 
+Person.findByGetInfo = result => {
+  sql.query("SELECT DISTINCT person.ID, congregation_ID, f_name, l_name, occupation, employer, family_ID, email, preferred_name, vrole.value, number, vnum.value, can_publish, address, vadd.value FROM ((((((person JOIN person_number JOIN phone_number) JOIN person_address ON person_address.person_ID) JOIN address ON person_address.address_ID) JOIN valid_value AS vadd ON address.type = vadd.id) JOIN valid_value AS vnum ON phone_number.type = vnum.id) JOIN valid_value AS vrole ON person.role = vrole.id) GROUP BY person.id;", (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+    console.log("People: ", res);
+    result(null, res);
+  })
+}
+
+
 Person.updateById = (id, person, result) => {
   sql.query(`UPDATE person SET congregation_ID = ${person.congregation_ID}, f_name = "${person.f_name}", l_name = "${person.l_name}", 
   occupation = "${person.occupation}", employer = "${person.employer}", family_ID = ${person.family_ID}, email = "${person.email}", gender = "${person.gender}", preferred_name = "${person.preferred_name}", role = ${person.role} 
