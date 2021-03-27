@@ -30,7 +30,7 @@ exports.find = (req, res) => {
     const person_ID = req.query.person_ID;
 
     // if this is a GET ALL call
-    if(group_ID == null && person_ID == null)
+    if(group_ID == null && person_ID == null && report == null)
     Group_Person.findAll((err, data) => {
         if (err)
           res.status(500).send({
