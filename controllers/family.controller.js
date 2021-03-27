@@ -34,7 +34,7 @@ exports.find = (req, res) => {
   const isGetNameList = req.query.isGetNameList;
 
   // if this is a GET ALL call
-  if (id == null && person_ID == null)
+  if (id == null && person_ID == null && isGetNameList == null)
     Family.findAll((err, data) => {
       if (err)
         res.status(500).send({
@@ -75,7 +75,7 @@ exports.find = (req, res) => {
       }
       else res.send(data);
     })
-  else if (isGetNameList != null) {
+  else if (isGetNameList == 1) {
     Family.findNameList((err, data) => {
       if (err) {
         res.status(500).send({
