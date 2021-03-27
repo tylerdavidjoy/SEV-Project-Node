@@ -36,9 +36,11 @@ exports.create = (req, res) => {
 exports.find = (req, res) => {
     const id = req.query.id;
     const email = req.query.email;
+    const getInfo = req.query.getInfo;
+    const userType = req.query.userType;
 
     // if this is a GET ALL call
-    if(id == null && email == null)
+    if(id == null && email == null && getInfo == null && userType == null)
     Person.findAll((err, data) => {
         if (err)
           res.status(500).send({
@@ -64,6 +66,33 @@ exports.find = (req, res) => {
     // if this is a GET by email call
     else if(id == null && email != null)
     Person.findByEmail(email, (err, data) => {
+          if (err)
+          {
+            res.status(500).send({
+              message:
+                err.message || "Internal server error - get person."
+            });
+          }
+          else res.send(data);
+      });
+
+    // if this is a GET all related info
+    else if(id == null && email == null && getInfo != null)
+    Person.findByGetInfo((err, data) => {
+          if (err)
+          {
+            res.status(500).send({
+              message:
+                err.message || "Internal server error - get person."
+            });
+          }
+          else res.send(data);
+      });
+
+
+    // if this is a GET all UserTypes
+    else if(id == null && email == null && getInfo == null && userType !=null)
+    Person.findAllUserTypes((err, data) => {
           if (err)
           {
             res.status(500).send({
