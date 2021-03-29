@@ -107,9 +107,8 @@ dist
 .dynamodb/
 
 # Image files
-*.jpg
+public/images/
 !default.jpg
-*.png
 
 # TernJS port file
 .tern-port
