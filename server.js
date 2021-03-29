@@ -26,7 +26,7 @@ app.use(cors(corsOptions));
 app.use(bodyParser.urlencoded({ extended : true }));
 app.use(bodyParser.json());
 
-app.use(express.static('public'));
+app.use('/static', express.static(__dirname+'/public'));
 app.use(fileUpload());
 
 app.get("/", (req, res) => {
