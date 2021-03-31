@@ -21,6 +21,9 @@ module.exports = app => {
     const person_hobby = require("../controllers/person_hobby.controller.js");
     const upload = require("../controllers/upload.controller.js");
     const document = require("../controllers/document.controller.js");
+    const person_doc = require("../controllers/person_doc.controller.js");
+    const family_doc = require("../controllers/family_doc.controller.js");
+
 
     // ----------------------------------
     // valid_value Table API
@@ -340,4 +343,24 @@ module.exports = app => {
 
     // Delete a document
     app.delete("/document", document.deleteDocument);
+
+    // ----------------------------------
+    // Person_Doc Table API
+    // ----------------------------------
+
+    // Find person_doc(s) by a parameter
+    app.get("/person_doc", person_doc.find);
+
+    // Update a person_doc
+    app.put("/person_doc", person_doc.update);
+
+    // ----------------------------------
+    // Family_Doc Table API
+    // ----------------------------------
+
+    // Find family_doc(s) by a parameter
+    //app.get("/family_doc", family_doc.find);
+
+    // Update a family_doc
+    //app.put("/family_doc", family_doc.update);
 };

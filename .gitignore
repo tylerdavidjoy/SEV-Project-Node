@@ -110,6 +110,9 @@ dist
 public/images/
 !default.jpg
 
+# Document files
+public/documents/
+
 # TernJS port file
 .tern-port
 © 2020 GitHub, Inc.
