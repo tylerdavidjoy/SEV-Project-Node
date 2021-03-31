@@ -97,7 +97,45 @@ Message.findByTime = (time_start, time_end, result) => {
 }
 
 Message.findByTypeTime = (type, time_start, time_end, result) => {
-  sql.query(`SELECT * FROM message WHERE message.type = ${type} AND (DAYOFYEAR(message.time_sent) BETWEEN DAYOFYEAR("${time_start}") AND DAYOFYEAR("${time_end}")) `, (err, res) => {
+  sql.query(`SELECT * FROM message WHERE message.type = ${type} AND (message.time_sent BETWEEN "${time_start}" AND "${time_end}") `, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found message(s): ", res);
+      result(null, res);
+      return;
+    }
+
+    // not found message with the id
+    result({ kind: "not_found" }, null);
+  })
+}
+
+Message.findByRecipientOfType = (receipient_type, receipient, result) => {
+  sql.query(`SELECT * FROM message WHERE (message.receipient_type = ${receipient_type} AND receipient IN ${receipient})`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found message(s): ", res);
+      result(null, res);
+      return;
+    }
+
+    // not found message with the id
+    result({ kind: "not_found" }, null);
+  })
+}
+
+Message.findByRecipientOfTypeAndDateRange = (receipient_type, receipient, time_start, time_end, result) => {
+  sql.query(`SELECT * FROM message WHERE (message.receipient_type = ${receipient_type} AND receipient IN ${receipient} AND (message.time_sent BETWEEN "${time_start}" AND "${time_end}"))`, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);
@@ -156,7 +194,7 @@ module.exports = Message;
 
 
 //Email
-Message.sendEmail = (message) => {
+function sendEmail (message) {
 
   //List of emails
   var recipients_emails = [];
