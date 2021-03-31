@@ -20,7 +20,8 @@ exports.create = (req, res) => {
       email: req.body.email,
       gender: req.body.gender,
       preferred_name: req.body.preferred_name,
-      role: req.body.role
+      role: req.body.role,
+      image: req.body.image
     });
 
     Person.create(person, (err, data) => {
