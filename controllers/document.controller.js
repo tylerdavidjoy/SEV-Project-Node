@@ -54,7 +54,7 @@ exports.deleteDocument = (req, res) => {
             message: "Must pass an id to delete"
         });
     }
-    if (isPerson != 0 || isPerson != 1) {
+    if (isPerson != 0 && isPerson != 1) {
         res.status(400).send({
             message: "is_person must be 0(false) or 1(true)"
         });
@@ -66,7 +66,7 @@ exports.deleteDocument = (req, res) => {
                 res.status(500).send({
                     message: "Could not delete person_doc with id " + id
                 });
-            } else res.send(`document was deleted successfully!`);
+            } else res.send({message: `document was deleted successfully!`});
         });
     }
     else {
@@ -75,7 +75,7 @@ exports.deleteDocument = (req, res) => {
                 res.status(500).send({
                     message: "Could not delete family_doc with id " + id
                 });
-            } else res.send(`document was deleted successfully!`);
+            } else res.send({message: `document was deleted successfully!`});
         });
     }
 }

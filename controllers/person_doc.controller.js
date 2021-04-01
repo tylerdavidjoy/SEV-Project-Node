@@ -6,7 +6,7 @@ exports.find = (req, res) => {
     const person_ID = req.query.person_ID;
 
     // if this is a GET ALL call
-    if (id == null)
+    if (id == null && person_ID == null)
         Person_Doc.findAll((err, data) => {
             if (err)
                 res.status(500).send({

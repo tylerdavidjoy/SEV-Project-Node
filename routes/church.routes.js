@@ -359,8 +359,8 @@ module.exports = app => {
     // ----------------------------------
 
     // Find family_doc(s) by a parameter
-    //app.get("/family_doc", family_doc.find);
+    app.get("/family_doc", family_doc.find);
 
     // Update a family_doc
-    //app.put("/family_doc", family_doc.update);
+    app.put("/family_doc", family_doc.update);
 };
