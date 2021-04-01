@@ -35,9 +35,11 @@ exports.find = (req, res) => {
     const time_start = req.query.time_start;
     const time_end = req.query.time_end;
     const resend_message = req.query.resend_message;
+    const receipient_type = req.query.receipient_type;
+    const receipient = req.query.receipient;
 
     // if this is a GET ALL call
-    if(id == null && type == null && time_start == null && time_end == null)
+    if(id == null && type == null && time_start == null && time_end == null && receipient_type == null && receipient == null )
     Message.findAll((err, data) => {
         if (err)
           res.status(500).send({
@@ -98,6 +100,31 @@ exports.find = (req, res) => {
           }
           else res.send(data);
       });
+
+    
+    else if(id == null && type == null && time_start == null && time_end == null && receipient_type != null && receipient != null)
+    Message.findByRecipientOfType(receipient_type, receipient, (err, data) => {
+          if (err)
+          {
+            res.status(500).send({
+              message:
+                err.message || "Internal server error - get message."
+            });
+          }
+          else res.send(data);
+      });
+
+      else if(id == null && type == null && time_start != null && time_end != null && receipient_type != null && receipient != null)
+      Message.findByRecipientOfTypeAndDateRange(receipient_type, receipient, time_start, time_end, (err, data) => {
+            if (err)
+            {
+              res.status(500).send({
+                message:
+                  err.message || "Internal server error - get message."
+              });
+            }
+            else res.send(data);
+        });
 }
 
 exports.update = (req, res) => {
