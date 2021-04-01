@@ -105,7 +105,6 @@ CREATE TABLE `life_event` (
   CONSTRAINT `le_type` FOREIGN KEY (`type`) REFERENCES `valid_value` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-
 CREATE TABLE `group` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `type` int(11) NOT NULL,
@@ -121,7 +120,6 @@ CREATE TABLE `group` (
   CONSTRAINT `group_leader` FOREIGN KEY (`leader`) REFERENCES `person` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `group_type` FOREIGN KEY (`type`) REFERENCES `valid_value` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
-
 
 CREATE TABLE `group_person` (
   `group_ID` int(11) NOT NULL,
@@ -183,7 +181,6 @@ CREATE TABLE `relationship` (
   CONSTRAINT `relationship_type` FOREIGN KEY (`type`) REFERENCES `valid_value` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT = 0 DEFAULT CHARSET=latin1;
 
-
 CREATE TABLE `message` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `subject` varchar(45) NOT NULL,
@@ -206,7 +203,6 @@ CREATE TABLE `person_hobby` (
   CONSTRAINT `ph_person_ID` FOREIGN KEY (`person_ID`) REFERENCES `person` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-
 CREATE TABLE `person_involvement` (
   `person_ID` int(11) NOT NULL,
   `involvement_ID` int(11) NOT NULL,
@@ -215,7 +211,6 @@ CREATE TABLE `person_involvement` (
   CONSTRAINT `pi_involvement_ID` FOREIGN KEY (`involvement_ID`) REFERENCES `valid_value` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `pi_person_ID` FOREIGN KEY (`person_ID`) REFERENCES `person` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 
 CREATE TABLE `person_ministry` (
   `person_ID` int(11) NOT NULL,
@@ -226,6 +221,25 @@ CREATE TABLE `person_ministry` (
   CONSTRAINT `pm_person_ID` FOREIGN KEY (`person_ID`) REFERENCES `person` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE TABLE `person_doc` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `person_ID` int(11) NOT NULL,
+  `doc_name` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  `display_name` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `person_ID_idx` (`person_ID`),
+  CONSTRAINT `person_ID` FOREIGN KEY (`person_ID`) REFERENCES `person` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `family_doc` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `family_ID` int(11) NOT NULL,
+  `doc_name` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  `display_name` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `family_ID_idx` (`family_ID`),
+  CONSTRAINT `family_ID` FOREIGN KEY (`family_ID`) REFERENCES `family` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `church`.`congregation` SET `name` = "Wilshire Church of Christ";
 
