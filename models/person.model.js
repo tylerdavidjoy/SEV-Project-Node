@@ -12,6 +12,7 @@ const Person = function (person) {
   this.gender = person.gender;
   this.preferred_name = person.preferred_name;
   this.role = person.role;
+  this.image = person.image;
 }
 
 Person.create = (person, result) => {
@@ -22,7 +23,7 @@ Person.create = (person, result) => {
   }
 
   sql.query(`INSERT INTO person VALUES ("", ${person.congregation_ID}, "${person.f_name}", "${person.l_name}", "${person.occupation}", 
-  "${person.employer}", ${person.family_ID}, "${person.email}", "${person.gender}", "${person.preferred_name}", ${person.role})`, (err, res) => {
+  "${person.employer}", ${person.family_ID}, "${person.email}", "${person.gender}", "${person.preferred_name}", ${person.role}, "${person.image}")`, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);
