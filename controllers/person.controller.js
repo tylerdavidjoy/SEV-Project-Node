@@ -26,10 +26,19 @@ exports.create = (req, res) => {
 
     Person.create(person, (err, data) => {
       if (err)
+      {
+        if(err.kind == 'invalid_ids')
+            res.status(400).send({
+              message:
+                err.message || "Invalid data for congregation_id, gender or role."
+            });
+
+        else
         res.status(500).send({
           message:
             err.message || "Internal server error - create person."
         });
+      }
       else res.send(data);
     });
 }
@@ -56,6 +65,13 @@ exports.find = (req, res) => {
     Person.findById(id, (err, data) => {
           if (err)
           {
+            if(err.kind == 'not_found')
+            res.status(404).send({
+              message:
+                err.message || "No data was found for that object."
+            });
+
+            else
             res.status(500).send({
               message:
                 err.message || "Internal server error - get person."
@@ -69,6 +85,13 @@ exports.find = (req, res) => {
     Person.findByEmail(email, (err, data) => {
           if (err)
           {
+            if(err.kind == 'not_found')
+            res.status(404).send({
+              message:
+                err.message || "No data was found for that object."
+            });
+
+            else
             res.status(500).send({
               message:
                 err.message || "Internal server error - get person."
@@ -82,6 +105,13 @@ exports.find = (req, res) => {
     Person.findByGetInfo((err, data) => {
           if (err)
           {
+            if(err.kind == 'not_found')
+            res.status(404).send({
+              message:
+                err.message || "No data was found for that object."
+            });
+
+            else
             res.status(500).send({
               message:
                 err.message || "Internal server error - get person."
@@ -96,6 +126,13 @@ exports.find = (req, res) => {
     Person.findAllUserTypes((err, data) => {
           if (err)
           {
+            if(err.kind == 'not_found')
+            res.status(404).send({
+              message:
+                err.message || "No data was found for that object."
+            });
+
+            else
             res.status(500).send({
               message:
                 err.message || "Internal server error - get person."
@@ -115,6 +152,19 @@ exports.update = (req, res) => {
     
     Person.updateById(req.query.id, new Person(req.body), (err, data) => {
         if (err) {
+          if(err.kind == 'not_found')
+            res.status(404).send({
+              message:
+                err.message || "No data was found for that object."
+            });
+
+            if(err.kind == 'invalid_ids')
+            res.status(400).send({
+              message:
+                err.message || "Invalid data for congregation_id, gender or role."
+            });
+
+            else
             res.status(500).send({
                 message: "Error updating person with id " + req.query.id
             });
@@ -127,7 +177,13 @@ exports.delete = (req,res) => {
 
     Person.remove(id, (err, data) => {
         if (err) {
-          console.log("ERROR:" + err);
+          if(err.kind == 'not_found')
+          res.status(404).send({
+            message:
+              err.message || "No data was found for that object."
+          });
+          
+          else
             res.status(500).send({
             message: "Could not delete person with id " + id
             });

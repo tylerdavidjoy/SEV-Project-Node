@@ -20,10 +20,19 @@ exports.create = (req, res) => {
 
     Life_Event.create(life_event, (err, data) => {
       if (err)
-        res.status(500).send({
+      {
+        if(err.kind == 'invalid_ids')
+        res.status(400).send({
           message:
-            err.message || "Internal server error - create life_event."
+            err.message || "Invalid data for person_ID, date, type or visible."
         });
+
+        else
+          res.status(500).send({
+            message:
+              err.message || "Internal server error - create life_event."
+          });
+      }
       else res.send(data);
     });
 }
@@ -52,6 +61,13 @@ exports.find = (req, res) => {
     Life_Event.findById(id, (err, data) => {
           if (err)
           {
+            if(err.kind == 'not_found')
+            res.status(404).send({
+              message:
+                err.message || "No data was found for that object."
+            });
+
+            else
             res.status(500).send({
               message:
                 err.message || "Internal server error - get life_event."
@@ -137,6 +153,13 @@ exports.update = (req, res) => {
     
     Life_Event.updateById(req.query.id, new Life_Event(req.body), (err, data) => {
         if (err) {
+          if(err.kind == 'not_found')
+          res.status(404).send({
+            message:
+              err.message || "No data was found for that object."
+          });
+
+          else
             res.status(500).send({
                 message: "Error updating life_event with id " + req.query.id
             });
@@ -149,6 +172,13 @@ exports.delete = (req,res) => {
     
     Life_Event.remove(id, (err, data) => {
         if (err) {
+          if(err.kind == 'not_found')
+          res.status(404).send({
+            message:
+              err.message || "No data was found for that object."
+          });
+
+          else
             res.status(500).send({
             message: "Could not delete life_event with id " + id
             });

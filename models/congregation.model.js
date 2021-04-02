@@ -25,8 +25,8 @@ Congregation.findAll = result => {
           result(err, null);
           return;
         }
-        console.log("congregations: ", res);
-        result(null, res);
+          console.log("congregations: ", res);
+          result(null, res);
     })
 }
 

@@ -13,7 +13,12 @@ Group.create = (group, result) => {
   sql.query(`INSERT INTO church.group VALUES ("", ${group.type}, ${group.leader}, ${group.congregation_ID}, "${group.name}")`, (err, res) => {
       if (err) {
           console.log("error: ", err);
-          result(err, null);
+          if (!res)
+            result({ kind: "invalid_ids" }, null);
+
+          else
+            result(err, null);
+
           return;
       } else {
           result(null, group);
@@ -79,14 +84,10 @@ Group.findByPerson = (person_ID, result) => {
       return;
     }
 
-    if (res.length) {
       console.log("found groups: ", res);
       result(null, res);
       return;
-    }
 
-    // not found groups with the person_id
-    result({ kind: "not_found" }, null);
   })
 }
 
@@ -110,14 +111,9 @@ Group.findMembers = (id, result) => {
       return;
     }
 
-    if (res.length) {
       console.log("found groups: ", res);
       result(null, res);
       return;
-    }
-
-    // not found group with the id
-    result({ kind: "not_found" }, null);
   })
 }
 
