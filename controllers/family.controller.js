@@ -13,7 +13,8 @@ exports.create = (req, res) => {
   const family = new Family({
     congregation_ID: req.body.congregation_ID,
     address_ID: req.body.address_ID,
-    head_ID: req.body.head_ID
+    head_ID: req.body.head_ID,
+    image: req.body.image
   });
 
   Family.create(family, (err, data) => {

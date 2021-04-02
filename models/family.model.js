@@ -6,11 +6,12 @@ const Family = function (family) {
   this.congregation_ID = family.congregation_ID;
   this.address_ID = family.address_ID;
   this.head_ID = family.head_ID;
+  this.image = family.image;
 }
 
 Family.create = (family, result) => {
   sql.query(`INSERT INTO church.family SET congregation_ID = "${family.congregation_ID}", address_ID = "${family.address_ID}", 
-            head_ID = "${family.head_ID}"`, (err, res) => {
+            head_ID = "${family.head_ID}", image = "${family.image}"`, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);
