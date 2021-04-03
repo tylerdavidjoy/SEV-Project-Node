@@ -10,9 +10,18 @@ const Person_Hobby = function (person_hobby) {
 Person_Hobby.createWithExistingHobby = (person_hobby, result) => {
     sql.query(`INSERT INTO person_hobby VALUES (${person_hobby.person_ID}, ${person_hobby.hobby_ID} )`, (err, res) => {
         if (err) {
-            console.log("error: ", err);
-            result(err, null);
-            return;
+            if (err.code == "ER_NO_REFERENCED_ROW_2" && err.sqlMessage.includes("REFERENCES `person`")) {
+                result({ kind: "not_found_person" }, null);
+                return;
+            } else if (err.code == "ER_NO_REFERENCED_ROW_2" && err.sqlMessage.includes("REFERENCES `valid_value`")) {
+                result({ kind: "not_found_valid_value" }, null);
+                return;
+            }
+            else {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            }
         } else {
             result(null, person_hobby);
         }
@@ -37,6 +46,10 @@ Person_Hobby.createWithNewHobby = (person_ID, newHobby, result) => {
             var p_h;
             sql.query(`INSERT INTO church.person_hobby SET person_ID = "${person_ID}", hobby_ID = "${response}"`, (err, res) => {
                 if (err) {
+                    if (err.code == "ER_NO_REFERENCED_ROW_2") {
+                        result({ kind: "not_found" }, null);
+                        return;
+                    }
                     console.log("error: ", err);
                     result(err, null);
                 } else {

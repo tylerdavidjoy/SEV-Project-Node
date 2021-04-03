@@ -25,20 +25,37 @@ exports.uploadDocument = (req, res) => {
 
     if (person_ID != null) {
         Document.personUpload(myFile, person_ID, (err, data) => {
-            if (err)
-                res.status(500).send({
-                    message:
-                        err.message || "Internal server error - upload document."
-                });
+            if (err) {
+                if (err.kind == "not_found") {
+                    res.status(400).send({
+                        message:
+                            err.message || "Could not find person for person_ID."
+                    });
+                } else {
+
+                    res.status(500).send({
+                        message:
+                            err.message || "Internal server error - upload document."
+                    });
+                }
+            }
             else res.send(data);
         });
     } else {
         Document.familyUpload(myFile, family_ID, (err, data) => {
-            if (err)
-                res.status(500).send({
-                    message:
-                        err.message || "Internal server error - upload document."
-                });
+            if (err) {
+                if (err.kind == "not_found") {
+                    res.status(400).send({
+                        message:
+                            err.message || "Could not find family for family_ID."
+                    });
+                } else {
+                    res.status(500).send({
+                        message:
+                            err.message || "Internal server error - upload document."
+                    });
+                }
+            }
             else res.send(data);
         });
     }
@@ -63,19 +80,34 @@ exports.deleteDocument = (req, res) => {
     if (isPerson == 1) {
         Document.personRemove(id, (err, data) => {
             if (err) {
-                res.status(500).send({
-                    message: "Could not delete person_doc with id " + id
-                });
-            } else res.send({message: `document was deleted successfully!`});
+                if (err.kind == "not_found") {
+                    res.status(404).send({
+                        message:
+                            err.message || "Could not find person_doc to delete for ID " + id
+                    });
+                } else {
+                    res.status(500).send({
+                        message: "Could not delete person_doc with id " + id
+                    });
+                }
+                
+            } else res.send({ message: `document was deleted successfully!` });
         });
     }
     else {
         Document.familyRemove(id, (err, data) => {
             if (err) {
-                res.status(500).send({
-                    message: "Could not delete family_doc with id " + id
-                });
-            } else res.send({message: `document was deleted successfully!`});
+                if (err.kind == "not_found") {
+                    res.status(404).send({
+                        message:
+                            err.message || "Could not find family_doc to delete for ID " + id
+                    });
+                } else {
+                    res.status(500).send({
+                        message: "Could not delete family_doc with id " + id
+                    });
+                }
+            } else res.send({ message: `document was deleted successfully!` });
         });
     }
 }

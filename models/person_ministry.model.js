@@ -9,9 +9,18 @@ const Person_Ministry = function (person_ministry) {
 Person_Ministry.create = (person_ministry, result) => {
     sql.query(`INSERT INTO person_ministry VALUES (${person_ministry.person_ID}, ${person_ministry.ministry_ID} )`, (err, res) => {
         if (err) {
-            console.log("error: ", err);
-            result(err, null);
-            return;
+            if (err.code == "ER_NO_REFERENCED_ROW_2" && err.sqlMessage.includes("REFERENCES `person`")) {
+                result({ kind: "not_found_person" }, null);
+                return;
+              } else if (err.code == "ER_NO_REFERENCED_ROW_2" && err.sqlMessage.includes("REFERENCES `valid_value`")) {
+                result({ kind: "not_found_valid_value" }, null);
+                return;
+              }
+              else {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+              }
         } else {
             result(null, person_ministry);
         }
