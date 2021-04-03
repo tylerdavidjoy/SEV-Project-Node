@@ -18,11 +18,31 @@ exports.create = (req, res) => {
   });
 
   Family.create(family, (err, data) => {
-    if (err)
-      res.status(500).send({
-        message:
-          err.message || "Internal server error - create family."
-      });
+    if (err) {
+      if (err.kind == "not_found_congregation") {
+        res.status(400).send({
+          message:
+            err.message || "Could not find congregation for congregation_ID."
+        });
+      } else if (err.kind == "not_found_address") {
+        res.status(400).send({
+          message:
+            err.message || "Could not find address for address_ID."
+        });
+      }
+      else if (err.kind == "not_found_person") {
+        res.status(400).send({
+          message:
+            err.message || "Could not find person for person_ID."
+        });
+      }
+      else {
+        res.status(500).send({
+          message:
+            err.message || "Internal server error - create family."
+        });
+      }
+    }
     else res.send(data);
   });
 }
@@ -49,10 +69,17 @@ exports.find = (req, res) => {
   else if (id != null && isGetPersons == 0 && isGetHeadOfFamily == 0)
     Family.findById(id, (err, data) => {
       if (err) {
-        res.status(500).send({
-          message:
-            err.message || "Internal server error - get family."
-        });
+        if (err.kind == "not_found") {
+          res.status(404).send({
+            message:
+              err.message || "Could not find family for ID " + id + "."
+          });
+        } else {
+          res.status(500).send({
+            message:
+              err.message || "Internal server error - get family."
+          });
+        }
       }
       else res.send(data);
     });
@@ -90,10 +117,17 @@ exports.find = (req, res) => {
   else
     Family.findFamilyForPerson(person_ID, (err, data) => {
       if (err) {
-        res.status(500).send({
-          message:
-            err.message || "Internal server error - get family for person."
-        });
+        if (err.kind == "not_found") {
+          res.status(404).send({
+            message:
+              err.message || "Could not find family for person with ID " + person_ID + "."
+          });
+        } else {
+          res.status(500).send({
+            message:
+              err.message || "Internal server error - get family for person."
+          });
+        }
       }
       else res.send(data);
     })
@@ -109,9 +143,17 @@ exports.update = (req, res) => {
 
   Family.updateById(req.query.id, new Family(req.body), (err, data) => {
     if (err) {
-      res.status(500).send({
-        message: "Error updating family with id " + req.query.id
-      });
+      if (err.kind == "not_found") {
+        res.status(404).send({
+          message:
+            err.message || "Could not find family for ID " + id + "."
+        });
+      } else {
+        res.status(500).send({
+          message: "Error updating family with id " + req.query.id
+        });
+      }
+      
     } else res.send(data);
   });
 }
@@ -121,9 +163,17 @@ exports.delete = (req, res) => {
 
   Family.remove(id, (err, data) => {
     if (err) {
-      res.status(500).send({
-        message: "Could not delete family with id " + id
-      });
+      if (err.kind == "not_found") {
+        res.status(404).send({
+          message:
+            err.message || "Could not find family for ID " + id + "."
+        });
+      } else {
+        res.status(500).send({
+          message: "Could not delete family with id " + id
+        });
+      }
+      
     } else res.send({ message: `family was deleted successfully!` });
   });
 }

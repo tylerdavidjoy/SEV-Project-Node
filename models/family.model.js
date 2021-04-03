@@ -13,9 +13,22 @@ Family.create = (family, result) => {
   sql.query(`INSERT INTO church.family SET congregation_ID = "${family.congregation_ID}", address_ID = "${family.address_ID}", 
             head_ID = "${family.head_ID}", image = "${family.image}"`, (err, res) => {
     if (err) {
-      console.log("error: ", err);
-      result(err, null);
-      return;
+      if (err.code == "ER_NO_REFERENCED_ROW_2" && err.sqlMessage.includes("REFERENCES `congregation`")) {
+        result({ kind: "not_found_congregation" }, null);
+        return;
+      } else if (err.code == "ER_NO_REFERENCED_ROW_2" && err.sqlMessage.includes("REFERENCES `address`")) {
+        result({ kind: "not_found_address" }, null);
+        return;
+      }
+      else if (err.code == "ER_NO_REFERENCED_ROW_2" && err.sqlMessage.includes("REFERENCES `person`")) {
+        result({ kind: "not_found_person" }, null);
+        return;
+      }
+      else {
+        console.log("error: ", err);
+        result(err, null);
+        return;
+      }
     } else {
       result(null, family);
     }
@@ -95,8 +108,14 @@ Family.findFamilyForPerson = (person_ID, result) => {
       result(err, null);
       return;
     }
-    console.log("persons: ", res);
-    result(null, res);
+    if (res.length) {
+      console.log("found family: ", res[0]);
+      result(null, res[0]);
+      return;
+    }
+
+    // not found family for person
+    result({ kind: "not_found" }, null);
   })
 }
 
@@ -116,8 +135,7 @@ Family.updateById = (id, family, result) => {
       return;
     }
     result(null, res);
-  }
-  );
+  });
 }
 
 Family.remove = (id, result) => {
@@ -132,7 +150,7 @@ Family.remove = (id, result) => {
       if (res.affectedRows == 0) {
         // not found family with the id
         result({ kind: "not_found" }, null);
-        familyReject({ kind: "not_found" }, null);
+        return;
       }
 
       console.log("deleted family with id: ", id);
