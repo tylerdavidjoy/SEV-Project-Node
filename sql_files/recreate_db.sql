@@ -61,7 +61,7 @@ CREATE TABLE `person` (
   KEY `person_role_idx` (`role`),
   CONSTRAINT `person_congregation_ID` FOREIGN KEY (`congregation_ID`) REFERENCES `congregation` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `person_family_ID` FOREIGN KEY (`family_ID`) REFERENCES `family` (`ID`) ON DELETE SET NULL ON UPDATE NO ACTION,
-  CONSTRAINT `person_role` FOREIGN KEY (`role`) REFERENCES `valid_value` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `person_role` FOREIGN KEY (`role`) REFERENCES `valid_value` (`ID`) ON DELETE SET NULL ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 
 ALTER TABLE `church`.`family` 
