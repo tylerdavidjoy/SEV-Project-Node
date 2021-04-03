@@ -21,10 +21,19 @@ exports.create = (req, res) => {
 
     Message.create(message, (err, data) => {
       if (err)
-        res.status(500).send({
+      {
+        if(err.kind == 'invalid_ids')
+        res.status(400).send({
           message:
-            err.message || "Internal server error - create message."
+            err.message || "Invalid data for type, receipient or receipient_type."
         });
+
+        else
+          res.status(500).send({
+            message:
+              err.message || "Internal server error - create message."
+          });
+      }
       else res.send(data);
     });
 }
@@ -54,6 +63,13 @@ exports.find = (req, res) => {
     Message.findById(id, (err, data) => {
           if (err)
           {
+            if(err.kind == 'not_found')
+            res.status(404).send({
+              message:
+                err.message || "No data was found for that object."
+            });
+
+            else
             res.status(500).send({
               message:
                 err.message || "Internal server error - get message."
@@ -137,6 +153,13 @@ exports.update = (req, res) => {
     
     Message.updateById(req.query.id, new Message(req.body), (err, data) => {
         if (err) {
+          if(err.kind == 'not_found')
+          res.status(404).send({
+            message:
+              err.message || "No data was found for that object."
+          });
+
+          else
             res.status(500).send({
                 message: "Error updating message with id " + req.query.id
             });
@@ -155,7 +178,13 @@ exports.delete = (req,res) => {
 
     Message.remove(id, (err, data) => {
         if (err) {
-          console.log("ERROR:" + err);
+          if(err.kind == 'not_found')
+          res.status(404).send({
+            message:
+              err.message || "No data was found for that object."
+          });
+
+          else
             res.status(500).send({
             message: "Could not delete message with id " + id
             });

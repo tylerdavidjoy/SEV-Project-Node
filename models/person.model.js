@@ -18,7 +18,7 @@ const Person = function (person) {
 Person.create = (person, result) => {
   if(person.gender != 'male' && person.gender != 'female' && person.gender != 'other' ){
     console.log(person.gender);
-    result("INCORRECT GENDER",null);
+    result({ kind: "invalid_ids" }, null);
     return;
   }
 
@@ -26,7 +26,12 @@ Person.create = (person, result) => {
   "${person.employer}", ${person.family_ID}, "${person.email}", "${person.gender}", "${person.preferred_name}", ${person.role}, "${person.image}")`, (err, res) => {
     if (err) {
       console.log("error: ", err);
-      result(err, null);
+      if (!res)
+        result({ kind: "invalid_ids" }, null);
+
+      else
+        result(err, null);
+
       return;
     } else {
       result(null, person);
@@ -116,7 +121,12 @@ Person.updateById = (id, person, result) => {
   WHERE ID = "${id}"`, (err, res) => {
     if (err) {
       console.log("error: ", err);
-      result(err, null);
+      if (!res)
+        result({ kind: "invalid_ids" }, null);
+
+      else
+        result(err, null);
+
       return;
     }
 

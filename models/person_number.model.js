@@ -8,10 +8,17 @@ const Person_Number = function(person_number) {
 
 Person_Number.create = (person_number, result) => {
     sql.query(`INSERT INTO person_number VALUES (${person_number.person_ID}, ${person_number.number_ID} )`, (err, res) => {
-        if (err) {
-            console.log("error: ", err);
-            result(err, null);
-            return;
+      if (err) {
+        console.log("error: ", err);
+        if (!res)
+          result({ kind: "invalid_ids" }, null);
+
+        else
+          result(err, null);
+
+          sql.query(`DELETE FROM phone_number WHERE ID = "${person_number.number_ID}"`, (err, res));
+
+        return;
         } else {
             result(null, person_number);
         }

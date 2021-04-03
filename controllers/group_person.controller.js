@@ -17,10 +17,19 @@ exports.create = (req, res) => {
 
     Group_Person.create(group_person, (err, data) => {
       if (err)
-        res.status(500).send({
+      {
+        if(err.kind == 'invalid_ids')
+        res.status(400).send({
           message:
-            err.message || "Internal server error - create group_person."
+            err.message || "Invalid data for id, group_ID or person_ID."
         });
+
+        else
+          res.status(500).send({
+            message:
+              err.message || "Internal server error - create group_person."
+          });
+      }
       else res.send(data);
     });
 }
@@ -30,7 +39,7 @@ exports.find = (req, res) => {
     const person_ID = req.query.person_ID;
 
     // if this is a GET ALL call
-    if(group_ID == null && person_ID == null && report == null)
+    if(group_ID == null && person_ID == null)
     Group_Person.findAll((err, data) => {
         if (err)
           res.status(500).send({
@@ -73,6 +82,13 @@ exports.delete = (req,res) => {
 
     Group_Person.remove(group_ID, person_ID, (err, data) => {
         if (err) {
+          if(err.kind == 'not_found')
+          res.status(404).send({
+            message:
+              err.message || "No data was found for that object."
+          });
+
+          else
             res.status(500).send({
             message: "Could not delete group with id " + group_ID + " and person id " + person_ID
             });

@@ -19,10 +19,19 @@ exports.create = (req, res) => {
 
     Group.create(group, (err, data) => {
       if (err)
-        res.status(500).send({
+      {
+        if(err.kind == 'invalid_ids')
+        res.status(400).send({
           message:
-            err.message || "Internal server error - create group."
+            err.message || "Invalid data for type, leader or congregation_id."
         });
+
+        else
+          res.status(500).send({
+            message:
+              err.message || "Internal server error - create group."
+          });
+      }
       else res.send(data);
     });
 }
@@ -50,6 +59,13 @@ exports.find = (req, res) => {
     Group.findById(id, (err, data) => {
           if (err)
           {
+            if(err.kind == 'not_found')
+            res.status(404).send({
+              message:
+                err.message || "No data was found for that object."
+            });
+
+            else
             res.status(500).send({
               message:
                 err.message || "Internal server error - get group."
@@ -63,6 +79,13 @@ exports.find = (req, res) => {
       Group.findByName(name, (err, data) => {
             if (err)
             {
+              if(err.kind == 'not_found')
+            res.status(404).send({
+              message:
+                err.message || "No data was found for that object."
+            });
+
+            else
               res.status(500).send({
                 message:
                   err.message || "Internal server error - get group."
@@ -117,8 +140,22 @@ exports.update = (req, res) => {
         });
     }
     
+    
     Group.updateById(req.query.id, new Group(req.body), (err, data) => {
         if (err) {
+          if(err.kind == 'not_found')
+            res.status(404).send({
+              message:
+                err.message || "No data was found for that object."
+            });
+
+            if(err.kind == 'invalid_ids')
+            res.status(400).send({
+              message:
+                err.message || "Invalid data for type, leader or congregation_id."
+            });
+
+            else
             res.status(500).send({
                 message: "Error updating group with id " + req.query.id
             });
@@ -131,6 +168,13 @@ exports.delete = (req,res) => {
     
     Group.remove(id, (err, data) => {
         if (err) {
+          if(err.kind == 'not_found')
+            res.status(404).send({
+              message:
+                err.message || "No data was found for that object."
+            });
+
+            else
             res.status(500).send({
             message: "Could not delete group with id " + id
             });
