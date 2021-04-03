@@ -159,6 +159,12 @@ exports.update = (req, res) => {
               err.message || "No data was found for that object."
           });
 
+          if(err.kind == 'invalid_ids')
+          res.status(400).send({
+            message:
+              err.message || "Invalid data for person_ID, date, type or visible."
+          });
+
           else
             res.status(500).send({
                 message: "Error updating life_event with id " + req.query.id

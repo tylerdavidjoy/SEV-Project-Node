@@ -121,9 +121,13 @@ Group.findMembers = (id, result) => {
 Group.updateById = (id, new_group, result) => {
   sql.query(`UPDATE church.group SET type = "${new_group.type}", leader = ${new_group.leader}, congregation_ID = ${new_group.congregation_ID}, name = "${new_group.name}" WHERE ID = "${id}"`,(err, res) => {
       if (err) {
-          console.log("error: ", err);
-          result(err, null);
-          return;
+        if (!res)
+        result({ kind: "invalid_ids" }, null);
+
+      else
+        result(err, null);
+
+      return;
       }
 
       if (res.affectedRows == 0) {

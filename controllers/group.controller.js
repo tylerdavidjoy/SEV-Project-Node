@@ -149,6 +149,12 @@ exports.update = (req, res) => {
                 err.message || "No data was found for that object."
             });
 
+            if(err.kind == 'invalid_ids')
+            res.status(400).send({
+              message:
+                err.message || "Invalid data for type, leader or congregation_id."
+            });
+
             else
             res.status(500).send({
                 message: "Error updating group with id " + req.query.id
