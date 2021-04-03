@@ -18,10 +18,19 @@ exports.create = (req, res) => {
 
     Relationship.create(relationship, (err, data) => {
       if (err)
-        res.status(500).send({
-          message:
-            err.message || "Internal server error - create relationship."
-        });
+      {
+        if(err.kind == 'invalid_ids')
+          res.status(400).send({
+            message:
+              err.message || "Invalid data for person1_ID, person2_ID or type."
+          });
+
+        else
+          res.status(500).send({
+            message:
+              err.message || "Internal server error - create relationship."
+          });
+      }
       else res.send(data);
     });
 }
@@ -59,6 +68,13 @@ exports.find = (req, res) => {
     if(person1_ID != null && person2_ID != null)
     Relationship.findRelation(person1_ID, person2_ID, (err, data) => {
         if (err)
+        if(err.kind == 'not_found')
+        res.status(404).send({
+          message:
+            err.message || "No data was found for that object."
+        });
+
+        else
           res.status(500).send({
             message:
               err.message || "Internal server error - get relationship."
@@ -77,6 +93,13 @@ exports.update = (req, res) => {
     
     Relationship.updateById(req.query.person1_ID, req.query.person2_ID, req.query.type, (err, data) => {
         if (err) {
+          if(err.kind == 'not_found')
+          res.status(404).send({
+            message:
+              err.message || "No data was found for that object."
+          });
+
+          else
             res.status(500).send({
                 message: "Error updating relationship with id " + req.query.id
             });
@@ -89,6 +112,13 @@ exports.delete = (req,res) => {
     
     Relationship.remove(req.query.person1_ID, req.query.person2_ID, (err, data) => {
         if (err) {
+          if(err.kind == 'not_found')
+          res.status(404).send({
+            message:
+              err.message || "No data was found for that object."
+          });
+
+          else
             res.status(500).send({
             message: "Could not delete relationship with person1_ID " + req.query.person1_ID 
             });

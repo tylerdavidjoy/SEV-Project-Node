@@ -12,8 +12,13 @@ const Phone_Number = function(phone_number) {
 Phone_Number.create = (phone_number, result) => {
     sql.query(`INSERT INTO phone_number VALUES ("", "${phone_number.number}", ${phone_number.can_publish}, ${phone_number.type} )`, (err, res) => {
         if (err) {
-            console.log("error: ", err);
+          console.log("error: ", err.typeOf());
+          if (!res)
+            result({ kind: "invalid_ids" }, null);
+
+          else
             result(err, null);
+
             return;
         } else {
           phone_number.ID = res.insertId;
@@ -78,7 +83,12 @@ Phone_Number.updateById = (id, phone_number, result) => {
     sql.query(`UPDATE phone_number SET number = "${phone_number.number}", can_publish = ${phone_number.can_publish}, type = ${phone_number.type}  WHERE ID = "${id}"`,(err, res) => {
         if (err) {
             console.log("error: ", err);
+            if (!res)
+              result({ kind: "invalid_ids" }, null);
+
+          else
             result(err, null);
+
             return;
         }
   
@@ -97,7 +107,13 @@ Phone_Number.remove = (id, result) => {
   sql.query(`DELETE FROM phone_number WHERE ID = "${id}"`, (err, res) => {
     if (err) {
       console.log("error: ", err);
-      result(null, err);
+
+      if (!res)
+      result({ kind: "invalid_ids" }, null);
+
+      else
+      result(err, null);
+
       return;
     }
 

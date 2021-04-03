@@ -19,11 +19,18 @@ exports.create = (req, res) => {
 
     var temp;
     Phone_Number.create(phone_number, (err, data) => {
-      if (err)
+      if (err){
+        if(err.kind == 'invalid_ids')
+            res.status(400).send({
+              message:
+                err.message || "Invalid data for id, can_publish or type."
+            });
+
         res.status(500).send({
           message:
             err.message || "Internal server error - create phone_number."
         });
+      }
 
       else
         {
@@ -53,6 +60,13 @@ exports.find = (req, res) => {
     Phone_Number.findById(id, (err, data) => {
           if (err)
           {
+            if(err.kind == 'not_found')
+            res.status(404).send({
+              message:
+                err.message || "No data was found for that object."
+            });
+
+            else
             res.status(500).send({
               message:
                 err.message || "Internal server error - get phone_number."
@@ -66,6 +80,13 @@ exports.find = (req, res) => {
     Phone_Number.findbyPerson(person_ID, (err, data) => {
           if (err)
           {
+            if(err.kind == 'not_found')
+            res.status(404).send({
+              message:
+                err.message || "No data was found for that object."
+            });
+
+            else
             res.status(500).send({
               message:
                 err.message || "Internal server error - get phone_number."
@@ -81,10 +102,29 @@ exports.update = (req, res) => {
         res.status(400).send({
             message: "Content can not be empty!"
         });
+
+    if(err.kind == 'not_found')
+      res.status(404).send({
+        message:
+          err.message || "No data was found for that object."
+      });
     }
     
     Phone_Number.updateById(req.query.id, new Phone_Number(req.body), (err, data) => {
         if (err) {
+          if(err.kind == 'not_found')
+            res.status(404).send({
+              message:
+                err.message || "No data was found for that object."
+            });
+
+            if(err.kind == 'invalid_ids')
+            res.status(400).send({
+              message:
+                err.message || "Invalid data for can_publish or type."
+            });
+
+            else
             res.status(500).send({
                 message: "Error updating phone_number with id " + req.query.id
             });
@@ -97,7 +137,19 @@ exports.delete = (req,res) => {
     
     Phone_Number.remove(id, (err, data) => {
         if (err) {
-            console.log("ERROR: " + err);
+          if(err.kind == 'not_found')
+          res.status(404).send({
+            message:
+              err.message || "No data was found for that object."
+          });
+
+          else if(err.kind == 'invalid_ids')
+          res.status(400).send({
+            message:
+              err.message || "Invalid data for can_publish or type."
+          });
+
+          else
             res.status(500).send({
             message: "Could not delete phone_number with id " + id
             });

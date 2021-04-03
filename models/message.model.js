@@ -15,7 +15,12 @@ Message.create = (message, result) => {
   sql.query(`INSERT INTO message VALUES ("", "${message.subject}", "${message.message}", ${message.type}, "${message.timesent}", ${message.receipient}, ${message.receipient_type} )`, (err, res) => {
     if (err) {
       console.log("error: ", err);
-      result(err, null);
+      if (!res)
+        result({ kind: "invalid_ids" }, null);
+
+      else
+        result(err, null);
+
       return;
     } 
     
@@ -65,15 +70,9 @@ Message.findByType = (type, result) => {
       result(err, null);
       return;
     }
-
-    if (res.length) {
       console.log("found message(s): ", res);
       result(null, res);
       return;
-    }
-
-    // not found message with the id
-    result({ kind: "not_found" }, null);
   })
 }
 
@@ -84,15 +83,9 @@ Message.findByTime = (time_start, time_end, result) => {
       result(err, null);
       return;
     }
-
-    if (res.length) {
       console.log("found message(s): ", res);
       result(null, res);
       return;
-    }
-
-    // not found message with the id
-    result({ kind: "not_found" }, null);
   })
 }
 
@@ -103,15 +96,9 @@ Message.findByTypeTime = (type, time_start, time_end, result) => {
       result(err, null);
       return;
     }
-
-    if (res.length) {
       console.log("found message(s): ", res);
       result(null, res);
       return;
-    }
-
-    // not found message with the id
-    result({ kind: "not_found" }, null);
   })
 }
 
@@ -122,15 +109,9 @@ Message.findByRecipientOfType = (receipient_type, receipient, result) => {
       result(err, null);
       return;
     }
-
-    if (res.length) {
       console.log("found message(s): ", res);
       result(null, res);
       return;
-    }
-
-    // not found message with the id
-    result({ kind: "not_found" }, null);
   })
 }
 
@@ -141,15 +122,9 @@ Message.findByRecipientOfTypeAndDateRange = (receipient_type, receipient, time_s
       result(err, null);
       return;
     }
-
-    if (res.length) {
       console.log("found message(s): ", res);
       result(null, res);
       return;
-    }
-
-    // not found message with the id
-    result({ kind: "not_found" }, null);
   })
 }
 

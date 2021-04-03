@@ -17,10 +17,19 @@ exports.create = (req, res) => {
 
     Person_Number.create(person_number, (err, data) => {
       if (err)
+      {
+        if(err.kind == 'invalid_ids')
+            res.status(400).send({
+              message:
+                err.message || "Invalid data for id, can_publish or type."
+            });
+
+        else
         res.status(500).send({
           message:
             err.message || "Internal server error - create person_number."
         });
+      }
       else res.send(data);
     });
 }

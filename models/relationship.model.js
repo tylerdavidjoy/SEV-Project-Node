@@ -11,7 +11,12 @@ Relationship.create = (relationship, result) => {
     sql.query(`INSERT INTO relationship VALUES (${relationship.person1_ID}, ${relationship.person2_ID}, ${relationship.type})`, (err, res) => {
         if (err) {
             console.log("error: ", err);
-            result(err, null);
+            if (!res)
+              result({ kind: "invalid_ids" }, null);
+
+            else
+              result(err, null);
+
             return;
         }
     })
@@ -19,8 +24,16 @@ Relationship.create = (relationship, result) => {
     sql.query(`INSERT INTO relationship VALUES (${relationship.person2_ID}, ${relationship.person1_ID}, ${relationship.type})`, (err, res) => {
       if (err) {
           console.log("error: ", err);
+          if (!res)
+          {
+            return;
+          }
+
+
+        else
           result(err, null);
-          return;
+
+        return;
       } else {
           result(null, relationship);
       }
@@ -46,15 +59,9 @@ Relationship.findByPerson = (id, result) => {
         result(err, null);
         return;
       }
-  
-      if (res.length) {
         console.log("found relationships: ", res);
         result(null, res);
         return;
-      }
-  
-      // not found congregation with the id
-      result({ kind: "not_found" }, null);
     })
 }
 

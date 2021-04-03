@@ -10,7 +10,12 @@ Group_Person.create = (group_person, result) => {
     sql.query(`INSERT INTO group_person VALUES (${group_person.group_ID}, ${group_person.person_ID})`, (err, res) => {
         if (err) {
             console.log("error: ", err);
-            result(err, null);
+            if (!res)
+              result({ kind: "invalid_ids" }, null);
+
+            else
+              result(err, null);
+
             return;
         } else {
             result(null, group_person);
@@ -38,15 +43,9 @@ Group_Person.findById = (id, result) => {
         result(err, null);
         return;
       }
-  
-      if (res.length) {
         console.log("found group_persons: ", res);
         result(null, res);
         return;
-      }
-  
-      // not found congregation with the id
-      result({ kind: "not_found" }, null);
     })
 }
 
@@ -58,15 +57,9 @@ Group_Person.findByPerson = (person_ID, result) => {
       result(err, null);
       return;
     }
-
-    if (res.length) {
       console.log("found group_persons: ", res);
       result(null, res);
       return;
-    }
-
-    // not found groups with the person_id
-    result({ kind: "not_found" }, null);
   })
 }
 
