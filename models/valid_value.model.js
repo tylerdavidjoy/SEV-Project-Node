@@ -85,7 +85,7 @@ Valid_Value.remove = (id, result) => {
   sql.query(`DELETE FROM valid_value WHERE ID = "${id}"`, (err, res) => {
     if (err) {
       console.log("error: ", err);
-      result(null, err);
+      result(err,null);
       return;
     }
 
