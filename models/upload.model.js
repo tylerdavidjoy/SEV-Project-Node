@@ -13,7 +13,7 @@ Upload.uploadImage = (req, result) => {
     let entity;
     let entity_ID;
 
-    if(person_ID == null && family_ID != null) {
+    if (person_ID == null && family_ID != null) {
         entity = "family";
         entity_ID = family_ID;
     }
@@ -25,13 +25,18 @@ Upload.uploadImage = (req, result) => {
         result("provide an ID for either person or family", null);
         return;
     }
-    
+
     let getImagePromise = new Promise(function (getImageResolve, getImageReject) {
         // Get the previous image
         sql.query(`SELECT image FROM ${entity} WHERE ID = ${entity_ID}`, (err, res) => {
             if (err) {
                 console.log("error: ", err);
                 getImageReject(err);
+            }
+            if(!res.length)
+            {
+                result({ kind: "not_found" }, null);
+                return;
             }
             getImageResolve(res[0].image);
         })
@@ -59,7 +64,7 @@ Upload.uploadImage = (req, result) => {
             // Create new image
             let imagePromise = new Promise(function (imageResolve, imageReject) {
                 // Generate unique name or new image
-                
+
                 let imageName = uuidv4() + path.extname(myFile.name);
                 console.log(imageName);
                 //  mv() method places the file inside public/images/ directory

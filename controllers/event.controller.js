@@ -22,10 +22,27 @@ exports.create = (req, res) => {
 
     Event.create(event, group_ID, (err, data) => {
         if (err)
-            res.status(500).send({
-                message:
-                    err.message || "Internal server error - create event."
-            });
+            if (err.kind == "not_found_room") {
+                res.status(400).send({
+                    message:
+                        err.message || "Could not find room for room_ID."
+                });
+            } else if (err.kind == "not_found_person") {
+                res.status(400).send({
+                    message:
+                        err.message || "Could not find person for person_ID."
+                });
+            } else if (err.kind == "not_found_group") {
+                res.status(400).send({
+                    message:
+                        err.message || "Could not find group for group_ID."
+                });
+            } else {
+                res.status(500).send({
+                    message:
+                        err.message || "Internal server error - create event."
+                });
+            }
         else res.send(data);
     });
 }
@@ -48,10 +65,17 @@ exports.find = (req, res) => {
     else if (id != null && group_ID == null && person_ID == null)
         Event.findById(id, (err, data) => {
             if (err) {
-                res.status(500).send({
-                    message:
-                        err.message || "Internal server error - get event."
-                });
+                if (err.kind == "not_found") {
+                    res.status(404).send({
+                        message:
+                            err.message || "Could not find family for ID " + id + "."
+                    });
+                } else {
+                    res.status(500).send({
+                        message:
+                            err.message || "Internal server error - get event."
+                    });
+                }
             }
             else res.send(data);
         });
@@ -87,9 +111,17 @@ exports.update = (req, res) => {
 
     Event.updateById(req.query.id, new Event(req.body), (err, data) => {
         if (err) {
-            res.status(500).send({
-                message: "Error updating event with id " + req.query.id
-            });
+            if (err.kind == "not_found") {
+                res.status(404).send({
+                    message:
+                        err.message || "Could not find event for ID " + req.query.id + "."
+                });
+            } else {
+                res.status(500).send({
+                    message: "Error updating event with id " + req.query.id
+                });
+            }
+
         } else res.send(data);
     });
 }
@@ -99,9 +131,17 @@ exports.delete = (req, res) => {
 
     Event.remove(id, (err, data) => {
         if (err) {
-            res.status(500).send({
-                message: "Could not delete event with id " + id
-            });
+            if (err.kind == "not_found") {
+                res.status(404).send({
+                    message:
+                        err.message || "Could not find event for ID " + id + "."
+                });
+            } else {
+                res.status(500).send({
+                    message: "Could not delete event with id " + id
+                });
+            }
+            
         } else res.send({ message: `event was deleted successfully!` });
     });
 }

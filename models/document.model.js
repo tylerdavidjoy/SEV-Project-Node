@@ -9,13 +9,13 @@ Document.personUpload = (document, person_ID, result) => {
     let docDisplayName = document.name;
     let documentPromise = new Promise(function (documentResolve, documentReject) {
         // Make sure the passed person_ID is valid
-        sql.query(`SELECT COUNT(*) FROM person WHERE person.ID = ${person_ID}`, (err, res) => {
+        sql.query(`SELECT COUNT(*) AS personCount FROM person WHERE person.ID = ${person_ID}`, (err, res) => {
             if (err) {
                 console.log("error: ", err);
                 documentReject(err);
-            } else if (res == 0) {
-                console.log("created document with id: ", res.insertId);
-                documentReject("invalid person_ID");
+            } else if (res[0].personCount == 0) {
+                result({ kind: "not_found" }, null);
+                return;
             } else {
                 documentResolve();
             }
@@ -63,13 +63,13 @@ Document.familyUpload = (document, family_ID, result) => {
     let docDisplayName = document.name;
     let documentPromise = new Promise(function (documentResolve, documentReject) {
         // Make sure the passed family_ID is valid
-        sql.query(`SELECT COUNT(*) FROM family WHERE family.ID = ${family_ID}`, (err, res) => {
+        sql.query(`SELECT COUNT(*) AS familyCount FROM family WHERE family.ID = ${family_ID}`, (err, res) => {
             if (err) {
                 console.log("error: ", err);
                 documentReject(err);
-            } else if (res == 0) {
-                console.log("created document with id: ", res.insertId);
-                documentReject("invalid family_ID");
+            } else if (res[0].familyCount == 0) {
+                result({ kind: "not_found" }, null);
+                return;
             } else {
                 documentResolve();
             }
@@ -119,10 +119,12 @@ Document.personRemove = (id, result) => {
             if (err) {
                 deleteReject(err);
             } else {
-                if(res.length > 0)
+                if (res.length > 0)
                     deleteResolve(res[0].doc_name);
-                else 
-                    deleteReject("No person_doc exists at id: " + id);
+                else {
+                    result({ kind: "not_found" }, null);
+                    return;
+                }
             }
         })
     })
@@ -156,10 +158,12 @@ Document.familyRemove = (id, result) => {
             if (err) {
                 deleteReject(err);
             } else {
-                if(res.length > 0)
+                if (res.length > 0)
                     deleteResolve(res[0].doc_name);
-                else 
-                    deleteReject("No family_doc exists at id: " + id);
+                else {
+                    result({ kind: "not_found" }, null);
+                    return;
+                }
             }
         })
     })

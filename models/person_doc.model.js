@@ -24,8 +24,14 @@ Person_Doc.findById = (id, result) => {
             result(err, null);
             return;
         }
-        result(null, res[0]);
-        return;
+        if (res.length) {
+            console.log("found person_doc: ", res[0]);
+            result(null, res[0]);
+            return;
+        }
+
+        // not found person_doc with the id
+        result({ kind: "not_found" }, null);
     })
 }
 

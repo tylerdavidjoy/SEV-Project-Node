@@ -20,10 +20,18 @@ exports.find = (req, res) => {
     else if (id != null && person_ID == null)
         Person_Doc.findById(id, (err, data) => {
             if (err) {
-                res.status(500).send({
-                    message:
-                        err.message || "Internal server error - get person_doc."
-                });
+                if (err.kind == "not_found") {
+                    res.status(404).send({
+                        message:
+                            err.message || "Could not find person_doc for ID " + id + "."
+                    });
+                } else {
+                    res.status(500).send({
+                        message:
+                            err.message || "Internal server error - get person_doc."
+                    });
+                }
+
             }
             else res.send(data);
         });
@@ -49,9 +57,17 @@ exports.update = (req, res) => {
 
     Person_Doc.updateById(req.query.id, new Person_Doc(req.body), (err, data) => {
         if (err) {
-            res.status(500).send({
-                message: "Error updating person_doc with id " + req.query.id
-            });
+            if (err.kind == "not_found") {
+                res.status(404).send({
+                    message:
+                        err.message || "Could not find person_doc for ID " + req.query.id + "."
+                });
+            } else {
+                res.status(500).send({
+                    message: "Error updating person_doc with id " + req.query.id
+                });
+            }
+            
         } else res.send(data);
     });
 }

@@ -11,22 +11,30 @@ Address.create = (address, person_ID, result) => {
     let addressPromise = new Promise(function (addressResolve, addressReject) {
         sql.query(`INSERT INTO church.address SET address = "${address.address}", type = "${address.type}"`, (err, res) => {
             if (err) {
-                console.log("error: ", err);
-                addressReject(err);
+                if (err.code == "ER_NO_REFERENCED_ROW_2") {
+                    result({ kind: "not_found_type" }, null);
+                    return
+                } else {
+                    console.log("error: ", err);
+                    addressReject(err);
+                }
             } else {
                 console.log("created address with id: ", res.insertId);
                 addressResolve(res.insertId);
             }
         })
-
     })
     addressPromise.then(
         function (response) {
             if (person_ID != null) {
                 sql.query(`INSERT INTO church.person_address SET person_ID = "${person_ID}", address_ID = "${response}"`, (err, res) => {
                     if (err) {
-                        console.log("error: ", err);
-                        result(err, null);
+                        if (err.code == "ER_NO_REFERENCED_ROW_2") {
+                            result({ kind: "not_found_person" }, null);
+                        } else {
+                            console.log("error: ", err);
+                            result(err, null);
+                        }
                     } else {
                         console.log("created person_address with person_ID: ", person_ID, " and address_ID: ", response);
                         result(null, address);

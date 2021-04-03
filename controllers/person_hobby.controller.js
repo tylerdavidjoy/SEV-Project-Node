@@ -20,20 +20,43 @@ exports.create = (req, res) => {
         });
 
         Person_Hobby.createWithExistingHobby(person_hobby, (err, data) => {
-            if (err)
-                res.status(500).send({
-                    message:
-                        err.message || "Internal server error - create person_hobby."
-                });
+            if (err) {
+                if (err.kind == "not_found_person") {
+                    res.status(400).send({
+                        message:
+                            err.message || "Could not find person for person_ID."
+                    });
+                } else if (err.kind == "not_found_valid_value") {
+                    res.status(400).send({
+                        message:
+                            err.message || "Could not find valid_value for valid_value_ID."
+                    });
+                }
+                else {
+                    res.status(500).send({
+                        message:
+                            err.message || "Internal server error - create person_hobby."
+                    });
+                }
+            }
             else res.send(data);
         });
     } else if (isNewHobby == 1) {
         Person_Hobby.createWithNewHobby(req.body.person_ID, req.body.hobby, (err, data) => {
-            if (err)
-                res.status(500).send({
-                    message:
-                        err.message || "Internal server error - create person_hobby."
-                });
+            if (err) {
+                if (err.kind == "not_found") {
+                    res.status(400).send({
+                        message:
+                            err.message || "Could not find person for person_ID."
+                    });
+                }
+                else {
+                    res.status(500).send({
+                        message:
+                            err.message || "Internal server error - create person_hobby."
+                    });
+                }
+            }
             else res.send(data);
         })
     } else {
@@ -83,10 +106,18 @@ exports.find = (req, res) => {
     else
         Person_Hobby.findByPersonIdAndHobbyId(person_id, hobby_id, (err, data) => {
             if (err) {
-                res.status(500).send({
-                    message:
-                        err.message || "Internal server error - get person_hobby."
-                });
+                if (err.kind == "not_found") {
+                    res.status(404).send({
+                        message:
+                            err.message || "Could not find person_hobby for person_ID " + person_id + " and hobby_ID " + hobby_id
+                    });
+                } else {
+                    res.status(500).send({
+                        message:
+                            err.message || "Internal server error - get person_hobby."
+                    });
+                }
+
             }
             else res.send(data);
         });
@@ -98,10 +129,18 @@ exports.delete = (req, res) => {
 
     Person_Hobby.remove(person_id, hobby_id, (err, data) => {
         if (err) {
-            console.log("ERROR:" + err);
-            res.status(500).send({
-                message: "Could not delete person_hobby with person_id " + person_id + " and hobby_id " + hobby_id
-            });
+            if (err.kind == "not_found") {
+                res.status(404).send({
+                    message:
+                        err.message || "Could not find person_hobby to delete for person_ID " + person_id + " and hobby_ID " + hobby_id
+                });
+            } else {
+                console.log("ERROR:" + err);
+                res.status(500).send({
+                    message: "Could not delete person_hobby with person_id " + person_id + " and hobby_id " + hobby_id
+                });
+            }
+
         } else res.send({ message: `person_hobby was deleted successfully!` });
     });
 }

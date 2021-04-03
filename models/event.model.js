@@ -15,20 +15,35 @@ Event.create = (event, group_ID, result) => {
         sql.query(`INSERT INTO church.event SET date = "${event.date}", leader = "${event.leader}", location = "${event.location}", 
             description = "${event.description}", recurring = "${event.recurring}"`, (err, res) => {
             if (err) {
-                console.log("error: ", err);
-                eventReject(err);
+                if (err.code == "ER_NO_REFERENCED_ROW_2" && err.sqlMessage.includes("REFERENCES `room`")) {
+                    result({ kind: "not_found_room" }, null);
+                    return;
+                }
+                else if (err.code == "ER_NO_REFERENCED_ROW_2" && err.sqlMessage.includes("REFERENCES `person`")) {
+                    result({ kind: "not_found_person" }, null);
+                    return;
+                }
+                else {
+                    console.log("error: ", err);
+                    eventReject(err);
+                }
+
             } else {
                 console.log("created event with id: ", res.insertId);
                 eventResolve(res.insertId);
             }
         })
-
+        
     })
     eventPromise.then(
         function (response) {
             if (group_ID != null) {
                 sql.query(`INSERT INTO church.event_group SET event_ID = "${response}", group_ID = "${group_ID}"`, (err, res) => {
                     if (err) {
+                        if (err.code == "ER_NO_REFERENCED_ROW_2") {
+                            result({ kind: "not_found_group" }, null);
+                            return;
+                        }
                         console.log("error: ", err);
                         result(err, null);
                     } else {
@@ -85,14 +100,9 @@ Event.findByGroupId = (group_ID, result) => {
             return;
         }
 
-        if (res.length) {
-            console.log("found events: ", res);
-            result(null, res);
-            return;
-        }
-
-        // not found event for group
-        result({ kind: "not_found" }, null);
+        console.log("found events: ", res);
+        result(null, res);
+        return;
     })
 }
 
@@ -104,14 +114,9 @@ Event.findByPersonId = (person_ID, result) => {
             return;
         }
 
-        if (res.length) {
-            console.log("found events: ", res);
-            result(null, res);
-            return;
-        }
-
-        // not found event for group
-        result({ kind: "not_found" }, null);
+        console.log("found events: ", res);
+        result(null, res);
+        return;
     })
 }
 
@@ -125,7 +130,7 @@ Event.updateById = (id, event, result) => {
         }
 
         if (res.affectedRows == 0) {
-            // not found address with the id
+            // not found event with the id
             result({ kind: "not_found" }, null);
             return;
         }
@@ -136,21 +141,21 @@ Event.updateById = (id, event, result) => {
 
 Event.remove = (id, result) => {
     sql.query(`DELETE FROM event WHERE ID = "${id}"`, (err, res) => {
-      if (err) {
-        console.log("error: ", err);
-        result(null, err);
-        return;
-      }
-  
-      if (res.affectedRows == 0) {
-        // not found event with the id
-        result({ kind: "not_found" }, null);
-        return;
-      }
-  
-      console.log("deleted event with id: ", id);
-      result(null, res);
+        if (err) {
+            console.log("error: ", err);
+            result(null, err);
+            return;
+        }
+
+        if (res.affectedRows == 0) {
+            // not found event with the id
+            result({ kind: "not_found" }, null);
+            return;
+        }
+
+        console.log("deleted event with id: ", id);
+        result(null, res);
     });
-  };
+};
 
 module.exports = Event;

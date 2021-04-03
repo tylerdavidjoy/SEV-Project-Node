@@ -9,9 +9,19 @@ const Event_Group = function(event_group) {
 Event_Group.create = (event_group, result) => {
     sql.query(`INSERT INTO event_group SET group_ID = "${event_group.group_ID}", event_ID = "${event_group.event_ID}"`, (err, res) => {
         if (err) {
+          if (err.code == "ER_NO_REFERENCED_ROW_2" && err.sqlMessage.includes("REFERENCES `group`")) {
+            result({ kind: "not_found_group" }, null);
+            return;
+          } else if (err.code == "ER_NO_REFERENCED_ROW_2" && err.sqlMessage.includes("REFERENCES `event`")) {
+            result({ kind: "not_found_event" }, null);
+            return;
+          }
+          else {
             console.log("error: ", err);
             result(err, null);
             return;
+          }
+            
         } else {
             result(null, event_group);
         }
