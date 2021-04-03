@@ -96,13 +96,17 @@ exports.delete = (req, res) => {
   const id = req.query.id;
 
   Valid_Value.remove(id, (err, data) => {
+    console.log("err", err)
+    
     if (err) {
       if (err.kind == 'not_found') {
         res.status(404).send({
           message:
             err.message || "No valid_value was found for ID " + req.query.id + "."
         });
-      } else {
+      } 
+      
+      else {
         res.status(500).send({
           message: "Could not delete valid_value with id " + id
         });

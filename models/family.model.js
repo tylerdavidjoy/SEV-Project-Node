@@ -85,8 +85,14 @@ Family.findHeadOfFamily = (id, result) => {
       result(err, null);
       return;
     }
-    console.log("person: ", res);
-    result(null, res);
+
+    if (res.length) {
+      console.log("person: ", res);
+      result(null, res);
+    }
+    
+    // not found family with the id
+    result({ kind: "not_found" }, null);
   })
 }
 
