@@ -95,7 +95,15 @@ exports.find = (req, res) => {
     })
   else if (id != null && isGetPersons == 0 && isGetHeadOfFamily == 1)
     Family.findHeadOfFamily(id, (err, data) => {
-      if (err) {
+      if (err) 
+      {
+        if (err.kind == "not_found")
+          res.status(404).send({
+            message:
+              err.message || "Could not find family for ID " + id + "."
+          });
+
+        else 
         res.status(500).send({
           message:
             err.message || "Internal server error - get head of family."
@@ -103,6 +111,7 @@ exports.find = (req, res) => {
       }
       else res.send(data);
     })
+    
   else if (isGetNameList == 1) {
     Family.findNameList((err, data) => {
       if (err) {
