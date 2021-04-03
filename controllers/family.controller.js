@@ -155,7 +155,7 @@ exports.update = (req, res) => {
       if (err.kind == "not_found") {
         res.status(404).send({
           message:
-            err.message || "Could not find family for ID " + id + "."
+            err.message || "Could not find family for ID " + req.query.id + "."
         });
       } else {
         res.status(500).send({
