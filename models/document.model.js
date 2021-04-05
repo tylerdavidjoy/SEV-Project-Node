@@ -28,7 +28,7 @@ Document.personUpload = (document, person_ID, result) => {
                 let docName = uuidv4() + path.extname(document.name);
                 //  mv() method places the file inside public/documents/ directory
                 let filePath = path.resolve("public/documents/", docName);
-                document.mv(filePath, function (err) {
+                document.mv(filePath, {mkdirp: true}, function (err) {
                     if (err)
                         uploadReject(err);
                     else
@@ -82,7 +82,7 @@ Document.familyUpload = (document, family_ID, result) => {
                 let docName = uuidv4() + path.extname(document.name);
                 //  mv() method places the file inside public/documents/ directory
                 let filePath = path.resolve("public/documents/", docName);
-                document.mv(filePath, function (err) {
+                document.mv(filePath, {mkdirp: true}, function (err) {
                     if (err)
                         uploadReject(err);
                     else
