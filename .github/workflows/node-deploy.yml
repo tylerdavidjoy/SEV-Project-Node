@@ -20,12 +20,11 @@ jobs:
               uses: easingthemes/ssh-deploy@v2.1.1
               env:
                   SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
-                  ARGS: '-rltgoDzvO --delete'
+                  ARGS: '-rltgoDzvO --delete --exclude /public/'
                   SOURCE: 'deploy/'
                   REMOTE_HOST: 'team2.eaglesoftwareteam.com'
                   REMOTE_USER: ubuntu
                   TARGET: 'nodeapps/church-backend'
-                  EXCLUDE: '/deploy/, /public/'
             - name: Execute SSH commmands on remote server
               uses: JimCronqvist/action-ssh@master
               env:
