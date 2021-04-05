@@ -54,8 +54,8 @@ Upload.uploadImage = (req, result) => {
             if (response != defaultImage) {
                 fs.unlink("public/images/" + response, (err) => {
                     if (err) {
-                        console.log(error);
-                        result(error, null);
+                        console.log(err);
+                        result(err, null);
                         return;
                     }
                 })

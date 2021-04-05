@@ -3,7 +3,7 @@ const Routes = require("../routes/church.routes.js");
 
 exports.uploadImage = (req, res) => {
   // Validate request
-  if (!req.body) {
+  if (!req.files) {
     res.status(400).send({
       message: "Content can not be empty!"
     });
