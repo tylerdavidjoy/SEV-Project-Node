@@ -97,7 +97,7 @@ Family.findHeadOfFamily = (id, result) => {
 }
 
 Family.findNameList = result => {
-  sql.query(`SELECT family.ID, person.l_name FROM family INNER JOIN person ON family.head_ID=person.ID`, (err, res) => {
+  sql.query(`SELECT family.ID, person.l_name, family.image FROM family INNER JOIN person ON family.head_ID=person.ID`, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);
