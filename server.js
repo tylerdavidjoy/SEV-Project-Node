@@ -8,20 +8,12 @@ var usersRouter = require('./routes/users'); */
 var express = require('express');
 const bodyParser = require("body-parser");
 const mysql = require('mysql');
-
-const cors = require('cors');
 const fileUpload = require('express-fileupload');
 
 
 
 var app = express();
 const PORT = 3000;
-
-var corsOptions = {
-  origin: 'http://localhost:8080',
-  optionsSuccessStatus: 200 // For legacy browser support
-}
-app.use(cors(corsOptions));
 
 app.use(bodyParser.urlencoded({ extended : true }));
 app.use(bodyParser.json());
