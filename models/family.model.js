@@ -55,7 +55,7 @@ Family.findById = (id, result) => {
       return;
     }
 
-    if (res.length) {
+    if (res) {
       console.log("found family: ", res[0]);
       result(null, res[0]);
       return;
@@ -86,7 +86,7 @@ Family.findHeadOfFamily = (id, result) => {
       return;
     }
 
-    if (res.length) {
+    if (res) {
       console.log("person: ", res);
       result(null, res);
       return;
@@ -115,7 +115,7 @@ Family.findFamilyForPerson = (person_ID, result) => {
       result(err, null);
       return;
     }
-    if (res.length) {
+    if (res) {
       console.log("found family: ", res[0]);
       result(null, res[0]);
       return;
