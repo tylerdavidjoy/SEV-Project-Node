@@ -33,11 +33,14 @@ Upload.uploadImage = (req, result) => {
                 console.log("error: ", err);
                 getImageReject(err);
             }
-            if(!res.length)
+            if(!res)
             {
+                console.log("Not found");
                 result({ kind: "not_found" }, null);
                 return;
             }
+
+            console.log("Resolve");
             getImageResolve(res[0].image);
         })
     })
