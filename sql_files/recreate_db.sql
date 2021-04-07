@@ -113,7 +113,6 @@ CREATE TABLE `group` (
   `leader` int(11) NOT NULL,
   `congregation_ID` int(11) NOT NULL,
   `name` varchar(45) NOT NULL,
-  `image` varchar(255) NOT NULL DEFAULT 'default.jpg',
   PRIMARY KEY (`ID`),
   UNIQUE KEY `name_UNIQUE` (`name`),
   KEY `group_congregation_ID_idx` (`congregation_ID`),

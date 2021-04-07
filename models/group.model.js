@@ -10,7 +10,7 @@ const Group = function(group) {
 }
 
 Group.create = (group, result) => {
-  sql.query(`INSERT INTO church.group VALUES ("", ${group.type}, ${group.leader}, ${group.congregation_ID}, "${group.name}", "default.jpg")`, (err, res) => {
+  sql.query(`INSERT INTO church.group VALUES ("", ${group.type}, ${group.leader}, ${group.congregation_ID}, "${group.name}")`, (err, res) => {
       if (err) {
           console.log("error: ", err);
           if (!res)
