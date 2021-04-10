@@ -96,7 +96,7 @@ Life_Event.findbydateType = (type,start,end, result) => {
 }
 
 Life_Event.generateReport = (type,start,end, result) => {
-  sql.query(`SELECT person.f_name, person.l_name, life_event.description, life_event.date FROM (person JOIN life_event) WHERE life_event.type = "${type}" AND DAYOFYEAR(life_event.date) BETWEEN DAYOFYEAR("${start}") AND DAYOFYEAR("${end}")`, (err, res) => {
+  sql.query(`SELECT person.f_name, person.l_name, life_event.description, life_event.date FROM (person JOIN life_event ON life_event.person_ID = person.id) WHERE life_event.type = "${type}" AND DAYOFYEAR(life_event.date) BETWEEN DAYOFYEAR("${start}") AND DAYOFYEAR("${end}")`, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);
