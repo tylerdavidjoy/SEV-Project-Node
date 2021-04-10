@@ -117,7 +117,7 @@ Person.findAllUserTypes = result => {
 
 Person.updateById = (id, person, result) => {
   sql.query(`UPDATE person SET congregation_ID = ${person.congregation_ID}, f_name = "${person.f_name}", l_name = "${person.l_name}", 
-  occupation = "${person.occupation}", employer = "${person.employer}", family_ID = ${person.family_ID}, email = "${person.email}", gender = "${person.gender}", preferred_name = "${person.preferred_name}", role = ${person.role} 
+  occupation = "${person.occupation}", employer = "${person.employer}", family_ID = ${person.family_ID}, email = "${person.email}", gender = "${person.gender}", preferred_name = "${person.preferred_name}", role = ${person.role}, image = "${person.image}" 
   WHERE ID = "${id}"`, (err, res) => {
     if (err) {
       console.log("error: ", err);
