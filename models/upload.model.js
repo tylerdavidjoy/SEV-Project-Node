@@ -10,37 +10,39 @@ Upload.uploadImage = (req, result) => {
     const myFile = req.files.file;
     const person_ID = req.query.person_ID;
     const family_ID = req.query.family_ID;
+    const group_ID = req.query.group_ID;
     let entity;
     let entity_ID;
 
-    if (person_ID == null && family_ID != null) {
+    if (person_ID == null && family_ID != null && group_ID == null) {
         entity = "family";
         entity_ID = family_ID;
     }
-    else if (person_ID != null && family_ID == null) {
+    else if (person_ID != null && family_ID == null && group_ID == null) {
         entity = "person";
         entity_ID = person_ID;
     }
+    else if (person_ID == null && family_ID == null && group_ID != null) {
+        entity = "group";
+        entity_ID = group_ID;
+    }
     else {
-        result("provide an ID for either person or family", null);
+        result("provide an ID for a person, family, or group", null);
         return;
     }
 
     let getImagePromise = new Promise(function (getImageResolve, getImageReject) {
         // Get the previous image
-        sql.query(`SELECT image FROM ${entity} WHERE ID = ${entity_ID}`, (err, res) => {
+        sql.query(`SELECT image FROM church.${entity} WHERE ${entity}.ID = ${entity_ID}`, (err, res) => {
             if (err) {
                 console.log("error: ", err);
                 getImageReject(err);
             }
             if(!res)
             {
-                console.log("Not found");
                 result({ kind: "not_found" }, null);
                 return;
             }
-
-            console.log("Resolve");
             getImageResolve(res[0].image);
         })
     })
@@ -83,7 +85,7 @@ Upload.uploadImage = (req, result) => {
             imagePromise.then(
                 function (response) {
                     // Update entity image reference to new image
-                    sql.query(`UPDATE ${entity} SET image = "${response}" WHERE ID = ${entity_ID}`, (err, res) => {
+                    sql.query(`UPDATE church.${entity} SET ${entity}.image = "${response}" WHERE ${entity}.ID = ${entity_ID}`, (err, res) => {
                         if (err) {
                             console.log("error: ", err);
                             result(err, null);
