@@ -28,6 +28,10 @@ Attendee.create = (attendee, result) => {
   })
 }
 
+Attendee.createForFamily = (family_ID, result) => {
+  
+}
+
 Attendee.findAll = result => {
   sql.query("SELECT * FROM attendee", (err, res) => {
     if (err) {
