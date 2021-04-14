@@ -4,8 +4,9 @@ const Routes = require("../routes/church.routes.js");
 // Create and save a new attendee
 exports.create = (req, res) => {
   const fam_ID = req.query.family_ID;
+  const event_ID = req.query.event_ID;
   // Validate request
-  if (!req.body.person_ID && !req.body.event_ID && !fam_ID) {
+  if (!req.body && !req.query.family_ID) {
     res.status(400).send({
       message: "Content can not be empty!"
     });
@@ -37,23 +38,27 @@ exports.create = (req, res) => {
           });
         }
       }
-
       else res.send(data);
     });
   } else {
-    Attendee.createForFamily(fam_ID, (err, data) => {
+    Attendee.createForFamily(fam_ID, event_ID, (err, data) => {
       if (err) {
-        if (err.kind == "not_found_person") {
+        if (err.kind == "not_found_family") {
+          res.status(400).send({
+            message:
+              err.message || "Could not find family for family_ID."
+          });
+        } else if(err.kind == "not_found_person") {
           res.status(400).send({
             message:
               err.message || "Could not find person for person_ID."
           });
-        } else if (err.kind == "not_found_event") {
+        } else if(err.kind == "not_found_event") {
           res.status(400).send({
             message:
               err.message || "Could not find event for event_ID."
           });
-        }
+        } 
         else {
           res.status(500).send({
             message:
@@ -61,11 +66,9 @@ exports.create = (req, res) => {
           });
         }
       }
-
       else res.send(data);
     })
   }
-
 }
 
 exports.find = (req, res) => {
