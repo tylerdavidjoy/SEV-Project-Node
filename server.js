@@ -10,10 +10,17 @@ const bodyParser = require("body-parser");
 const mysql = require('mysql');
 const fileUpload = require('express-fileupload');
 
+const cors = require('cors');
+var corsOptions = {
+  origin: 'http://localhost:8080',
+  optionsSuccessStatus: 200 // For legacy browser support
+}
 
 
 var app = express();
 const PORT = 3000;
+
+app.use(cors(corsOptions));
 
 app.use(bodyParser.urlencoded({ extended : true }));
 app.use(bodyParser.json());
