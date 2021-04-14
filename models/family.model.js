@@ -10,29 +10,51 @@ const Family = function (family) {
 }
 
 Family.create = (family, result) => {
-  sql.query(`INSERT INTO church.family SET congregation_ID = "${family.congregation_ID}", address_ID = "${family.address_ID}", 
-            head_ID = "${family.head_ID}", image = "${family.image}"`, (err, res) => {
-    if (err) {
-      if (err.code == "ER_NO_REFERENCED_ROW_2" && err.sqlMessage.includes("REFERENCES `congregation`")) {
-        result({ kind: "not_found_congregation" }, null);
-        return;
-      } else if (err.code == "ER_NO_REFERENCED_ROW_2" && err.sqlMessage.includes("REFERENCES `address`")) {
-        result({ kind: "not_found_address" }, null);
-        return;
+  let familyPromise = new Promise(function (familyResolve, familyReject) {
+    sql.query(`INSERT INTO church.family SET congregation_ID = "${family.congregation_ID}", address_ID = "${family.address_ID}", 
+    head_ID = "${family.head_ID}", image = "${family.image}"`, (err, res) => {
+      if (err) {
+        if (err.code == "ER_NO_REFERENCED_ROW_2" && err.sqlMessage.includes("REFERENCES `congregation`")) {
+          //result({ kind: "not_found_congregation" }, null);
+          //return
+          familyReject({ kind: "not_found_congregation" });
+        } else if (err.code == "ER_NO_REFERENCED_ROW_2" && err.sqlMessage.includes("REFERENCES `address`")) {
+          // result({ kind: "not_found_address" }, null);
+          // return;
+          familyReject({ kind: "not_found_address" });
+        }
+        else if (err.code == "ER_NO_REFERENCED_ROW_2" && err.sqlMessage.includes("REFERENCES `person`")) {
+          // result({ kind: "not_found_person" }, null);
+          // return;
+          familyReject({ kind: "not_found_person" });
+        }
+        else {
+          console.log("error: ", err);
+          // result(err, null);
+          // return;
+          familyReject(err);
+        }
+      } else {
+        familyResolve(res.insertId);
       }
-      else if (err.code == "ER_NO_REFERENCED_ROW_2" && err.sqlMessage.includes("REFERENCES `person`")) {
-        result({ kind: "not_found_person" }, null);
-        return;
-      }
-      else {
-        console.log("error: ", err);
-        result(err, null);
-        return;
-      }
-    } else {
-      result(null, family);
-    }
+    })
   })
+  familyPromise.then(
+    function (response) {
+      sql.query(`UPDATE person SET family_ID = ${response} WHERE person.ID = ${family.head_ID}`, (err, res) => {
+        if (err) {
+          console.log("error: ", err);
+          result(err, null);
+          return;
+        }
+        result(null, family);
+      });
+    },
+    function (error) {
+      result(error, null);
+    }
+  )
+
 }
 
 Family.findAll = result => {
@@ -91,7 +113,7 @@ Family.findHeadOfFamily = (id, result) => {
       result(null, res);
       return;
     }
-    
+
     // not found family with the id
     result({ kind: "not_found" }, null);
   })
