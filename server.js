@@ -9,13 +9,8 @@ var express = require('express');
 const bodyParser = require("body-parser");
 const mysql = require('mysql');
 const fileUpload = require('express-fileupload');
-const cors = require('cors');
 
-var corsOptions = {
-  origin: 'http://localhost:8080',
-  optionsSuccessStatus: 200 // For legacy browser support
-}
-app.use(cors(corsOptions));
+
 
 var app = express();
 const PORT = 3000;
