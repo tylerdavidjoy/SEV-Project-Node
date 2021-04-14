@@ -28,6 +28,76 @@ Attendee.create = (attendee, result) => {
   })
 }
 
+Attendee.createForFamily = (family_ID, event_ID, result) => {
+  let verifyEventPromise = new Promise(function (verifyEventResolve, verifyEventReject) {
+    sql.query(`SELECT * FROM event WHERE event.ID = ${event_ID}`, (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        verifyEventReject(err, null);
+      } else if (res.length == 0) {
+        verifyEventReject({ kind: "not_found_event" }, null);
+      } else {
+        verifyEventResolve(res);
+      }
+    })
+  })
+  verifyEventPromise.then(
+    function (response) {
+      let getFamilyPromise = new Promise(function (getFamilyResolve, getFamilyReject) {
+        sql.query(`SELECT * FROM person WHERE person.family_ID = ${family_ID}`, (err, res) => {
+          if (err) {
+            console.log("error: ", err);
+            getFamilyReject(err, null);
+          } else {
+            getFamilyResolve(res);
+          }
+        })
+      })
+      getFamilyPromise.then(
+        function (response) {
+          let errorHolder;
+          for (let i = 0; i < response.length && !errorHolder; i++) {
+            new Promise(function (addAttendeeResolve, addAttendeeReject) {
+              sql.query(`INSERT INTO attendee SET person_ID = ${response[i].ID}, event_ID = ${event_ID}`, (err, res) => {
+                if (err) {
+                  if (err.code == "ER_NO_REFERENCED_ROW_2" && err.sqlMessage.includes("REFERENCES `person`")) {
+                    addAttendeeReject({ kind: "not_found_person" }, null);
+                  } else if (err.code == "ER_NO_REFERENCED_ROW_2" && err.sqlMessage.includes("REFERENCES `event`")) {
+                    addAttendeeReject({ kind: "not_found_event" }, null);
+                  } else if (err.code == "ER_DUP_ENTRY") {
+                    addAttendeeResolve(null);
+                  } else {
+                    console.log("error: ", err);
+                    addAttendeeReject(err, null);
+                  }
+                } else {
+                  addAttendeeResolve(res);
+                }
+              })
+            }).then(
+              function (response) { },
+              function (error) {
+                errorHolder = error;
+              }
+            )
+          }
+          if (!errorHolder) {
+            result(null, response)
+          } else {
+            result(errorHolder, null);
+          }
+        },
+        function (error) {
+          result(error, null);
+          return;
+        })
+    },
+    function (error) {
+      result(error, null);
+      return;
+    })
+}
+
 Attendee.findAll = result => {
   sql.query("SELECT * FROM attendee", (err, res) => {
     if (err) {

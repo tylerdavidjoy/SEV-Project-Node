@@ -12,14 +12,82 @@ Group_Person.create = (group_person, result) => {
             console.log("error: ", err);
             if (!res)
               result({ kind: "invalid_ids" }, null);
-
             else
               result(err, null);
-
             return;
         } else {
             result(null, group_person);
         }
+    })
+}
+
+Group_Person.createForFamily = (family_ID, group_ID, result) => {
+  let verifyGroupPromise = new Promise(function (verifyGroupResolve, verifyGroupReject) {
+    sql.query(`SELECT * FROM church.group WHERE church.group.ID = ${group_ID}`, (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        verifyGroupReject(err, null);
+      } else if (res.length == 0) {
+        verifyGroupReject({ kind: "not_found_group" }, null);
+      } else {
+        verifyGroupResolve(res);
+      }
+    })
+  })
+  verifyGroupPromise.then(
+    function (response) {
+      let getFamilyPromise = new Promise(function (getFamilyResolve, getFamilyReject) {
+        sql.query(`SELECT * FROM person WHERE person.family_ID = ${family_ID}`, (err, res) => {
+          if (err) {
+            console.log("error: ", err);
+            getFamilyReject(err, null);
+          } else {
+            getFamilyResolve(res);
+          }
+        })
+      })
+      getFamilyPromise.then(
+        function (response) {
+          let errorHolder;
+          for (let i = 0; i < response.length && !errorHolder; i++) {
+            new Promise(function (addGroupPersonResolve, addGroupPersonReject) {
+              sql.query(`INSERT INTO group_person SET person_ID = ${response[i].ID}, group_ID = ${group_ID}`, (err, res) => {
+                if (err) {
+                  if (err.code == "ER_NO_REFERENCED_ROW_2" && err.sqlMessage.includes("REFERENCES `person`")) {
+                    addGroupPersonReject({ kind: "not_found_person" }, null);
+                  } else if (err.code == "ER_NO_REFERENCED_ROW_2" && err.sqlMessage.includes("REFERENCES `group`")) {
+                    addGroupPersonReject({ kind: "not_found_group" }, null);
+                  } else if (err.code == "ER_DUP_ENTRY") {
+                    addGroupPersonResolve(null);
+                  } else {
+                    console.log("error: ", err);
+                    addGroupPersonReject(err, null);
+                  }
+                } else {
+                  addGroupPersonResolve(res);
+                }
+              })
+            }).then(
+              function (response) { },
+              function (error) {
+                errorHolder = error;
+              }
+            )
+          }
+          if (!errorHolder) {
+            result(null, response)
+          } else {
+            result(errorHolder, null);
+          }
+        },
+        function (error) {
+          result(error, null);
+          return;
+        })
+    },
+    function (error) {
+      result(error, null);
+      return;
     })
 }
 

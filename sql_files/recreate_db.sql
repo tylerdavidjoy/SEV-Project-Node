@@ -128,10 +128,11 @@ CREATE TABLE `group` (
 CREATE TABLE `group_person` (
   `group_ID` int(11) NOT NULL,
   `person_ID` int(11) NOT NULL,
+  PRIMARY KEY (`group_ID`,`person_ID`),
   KEY `gp_group_ID_idx` (`group_ID`),
   KEY `gp_person_ID_idx` (`person_ID`),
-  CONSTRAINT `gp_group_ID` FOREIGN KEY (`group_ID`) REFERENCES `group` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `gp_person_ID` FOREIGN KEY (`person_ID`) REFERENCES `person` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION
+  CONSTRAINT `gp_group_ID` FOREIGN KEY (`group_ID`) REFERENCES `group` (`ID`) ON DELETE CASCADE,
+  CONSTRAINT `gp_person_ID` FOREIGN KEY (`person_ID`) REFERENCES `person` (`ID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `room` (
@@ -157,11 +158,13 @@ CREATE TABLE `event` (
 CREATE TABLE `attendee` (
   `person_ID` int(11) NOT NULL,
   `event_ID` int(11) NOT NULL,
+  PRIMARY KEY (`person_ID`,`event_ID`),
   KEY `attendee_person_ID_idx` (`person_ID`),
   KEY `attendee_event_ID_idx` (`event_ID`),
   CONSTRAINT `attendee_event_ID` FOREIGN KEY (`event_ID`) REFERENCES `event` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `attendee_person_ID` FOREIGN KEY (`person_ID`) REFERENCES `person` (`ID`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 
 CREATE TABLE `event_group` (
   `event_ID` int(11) NOT NULL,
