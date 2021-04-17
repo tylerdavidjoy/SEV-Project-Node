@@ -92,7 +92,7 @@ Group.findByPerson = (person_ID, result) => {
 }
 
 Group.findReport = result => {
-  sql.query("SELECT DISTINCT group.id, v1.value, group.name, person.f_name, person.l_name FROM ((`group` JOIN person ON group.leader = person.id) JOIN valid_value as v1 ON group.type = v1.id) GROUP BY group.id;", (err, res) => {
+  sql.query("SELECT DISTINCT group.id, v1.value, group.name, person.f_name, person.l_name, group.image FROM ((`group` JOIN person ON group.leader = person.id) JOIN valid_value as v1 ON group.type = v1.id) GROUP BY group.id;", (err, res) => {
       if (err) {
         console.log("error: ", err);
         result(err, null);
