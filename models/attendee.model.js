@@ -105,7 +105,28 @@ Attendee.findAll = result => {
       result(err, null);
       return;
     }
-    console.log("attendee: ", res);
+    result(null, res);
+  })
+}
+
+Attendee.findForEvent = (event_ID, result) => {
+  sql.query(`SELECT * FROM attendee WHERE attendee.event_ID = ${event_ID}`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+    result(null, res);
+  })
+}
+
+Attendee.findForPerson = (person_ID, result) => {
+  sql.query(`SELECT * FROM attendee WHERE attendee.person_ID = ${person_ID}`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
     result(null, res);
   })
 }
