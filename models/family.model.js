@@ -106,9 +106,7 @@ Family.findHeadOfFamily = (id, result) => {
       console.log("error: ", err);
       result(err, null);
       return;
-    }
-
-    if (res) {
+    } else if (res.length > 0) {
       console.log("person: ", res);
       result(null, res);
       return;
@@ -128,6 +126,67 @@ Family.findNameList = result => {
     }
     result(null, res);
   })
+}
+
+Family.findHeadOfHouseholdSpouse = (id, result) => {
+  // getPersonPromise
+  let getPersonPromise = new Promise(function (getPersonResolve, getPersonReject) {
+    sql.query(`SELECT * FROM person WHERE person.ID IN (SELECT head_ID FROM family WHERE family.ID = "${id}")`, (err, res) => {
+      if (err) {
+        console.log("error: ", err)
+        getPersonReject(err)
+      } else if (res.length > 0) {
+        getPersonResolve(res[0])
+      } else { 
+        getPersonReject({kind: "not_found_head"})
+      }
+    })
+  })
+  getPersonPromise.then(
+    // getPersonPromise resolve
+    function (response) {
+      // getVVPromise
+      let getVVPromise = new Promise(function(getVVResolve, getVVReject) {
+        sql.query(`SELECT * FROM valid_value WHERE valid_value.value_group = "relationship" AND valid_value.value = "spouse"`, (err, res) => {
+          if (err) {
+            console.log("error: ", err);
+            getVVReject(err)
+          } else if (res.length > 0) {
+            getVVResolve({person_ID: response.ID, valid_value_ID: res[0].ID})
+          } else {
+            getVVReject({kind: "not_found_valid_value"})
+          }
+        })
+      })
+      getVVPromise.then(
+        // getVVPromise resolve
+        function(response) {
+          sql.query(`SELECT * FROM person WHERE person.ID IN (SELECT person2_ID FROM relationship 
+            WHERE person1_ID = ${response.person_ID} AND type = ${response.valid_value_ID})`, (err, res) => {
+            if (err) {
+              console.log("error: ", err)
+              result(err, null)
+            } else if (res.length > 0) {
+              result(null, res)
+            } else {
+              result({ kind: "not_found_spouse" }, null)
+            }
+            return
+          })
+        },
+        // getVVPromise reject
+        function (error) {
+          result(error, null)
+          return
+        }
+      )
+    },
+    // getPersonPromise reject
+    function (error) {
+      result(error, null)
+      return
+    }
+  )
 }
 
 Family.findFamilyForPerson = (person_ID, result) => {

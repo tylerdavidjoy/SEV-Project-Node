@@ -53,9 +53,10 @@ exports.find = (req, res) => {
   const isGetPersons = req.query.isGetPersons;
   const isGetHeadOfFamily = req.query.isGetHeadOfFamily;
   const isGetNameList = req.query.isGetNameList;
+  const isGetSpouse = req.query.isGetSpouse;
 
   // if this is a GET ALL call
-  if (id == null && person_ID == null && isGetNameList == null)
+  if (id == null && person_ID == null && isGetNameList == null && isGetSpouse == null)
     Family.findAll((err, data) => {
       if (err)
         res.status(500).send({
@@ -66,7 +67,7 @@ exports.find = (req, res) => {
     });
 
   // if this is a GET by Id call
-  else if (id != null && isGetPersons == 0 && isGetHeadOfFamily == 0)
+  else if (id != null && isGetPersons == 0 && isGetHeadOfFamily == 0 && isGetSpouse == null)
     Family.findById(id, (err, data) => {
       if (err) {
         if (err.kind == "not_found") {
@@ -83,7 +84,7 @@ exports.find = (req, res) => {
       }
       else res.send(data);
     });
-  else if (id != null && isGetPersons == 1 && isGetHeadOfFamily == 0)
+  else if (id != null && isGetPersons == 1 && isGetHeadOfFamily == 0 && isGetSpouse == null)
     Family.findPersonsInFamily(id, (err, data) => {
       if (err) {
         res.status(500).send({
@@ -93,17 +94,27 @@ exports.find = (req, res) => {
       }
       else res.send(data);
     })
-  else if (id != null && isGetPersons == 0 && isGetHeadOfFamily == 1)
+  else if (id != null && isGetPersons == 0 && isGetHeadOfFamily == 1 && isGetSpouse == null)
     Family.findHeadOfFamily(id, (err, data) => {
-      if (err) 
-      {
+      if (err) {
         if (err.kind == "not_found")
           res.status(404).send({
             message:
               err.message || "Could not find family for ID " + id + "."
           });
 
-        else 
+        else
+          res.status(500).send({
+            message:
+              err.message || "Internal server error - get head of family."
+          });
+      }
+      else res.send(data);
+    })
+
+  else if (isGetNameList == 1 && isGetSpouse == null) {
+    Family.findNameList((err, data) => {
+      if (err) {
         res.status(500).send({
           message:
             err.message || "Internal server error - get head of family."
@@ -111,14 +122,33 @@ exports.find = (req, res) => {
       }
       else res.send(data);
     })
-    
-  else if (isGetNameList == 1) {
-    Family.findNameList((err, data) => {
+  }
+  else if (isGetSpouse == 1) {
+    Family.findHeadOfHouseholdSpouse(id, (err, data) => {
       if (err) {
-        res.status(500).send({
-          message:
-            err.message || "Internal server error - get head of family."
-        });
+        if (err.kind == "not_found_head") {
+          res.status(404).send({
+            message:
+              err.message || "Could not find head of household for family id: " + id
+          });
+        } else if (err.kind == "not_found_valid_value") {
+          res.status(404).send({
+            message:
+              err.message || "Could not find valid_value with value_group 'relationship' and value 'spouse'"
+          });
+        }
+        else if (err.kind == "not_found_spouse") {
+          res.status(404).send({
+            message:
+              err.message || "Either spouse is not set for head of household or ID held for spouse does not exist"
+          });
+        }
+        else {
+          res.status(500).send({
+            message:
+              err.message || "Internal server error - get spouse of head of household."
+          });
+        }
       }
       else res.send(data);
     })
@@ -162,7 +192,7 @@ exports.update = (req, res) => {
           message: "Error updating family with id " + req.query.id
         });
       }
-      
+
     } else res.send(data);
   });
 }
@@ -182,7 +212,7 @@ exports.delete = (req, res) => {
           message: "Could not delete family with id " + id
         });
       }
-      
+
     } else res.send({ message: `family was deleted successfully!` });
   });
 }
