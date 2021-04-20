@@ -42,6 +42,7 @@ exports.find = (req, res) => {
     const get_members = req.query.get_members;
     const name = req.query.name;
     const report = req.query.report;
+    const type = req.query.type;
 
     // if this is a GET ALL call
     if(id == null && person_ID == null && name == null && report == null)
@@ -121,7 +122,7 @@ exports.find = (req, res) => {
       });
 
     // if this is a GET for Report call
-    if(id == null && person_ID == null && name == null && report != null)
+    if(id == null && person_ID == null && name == null && report != null && type == null)
     Group.findReport((err, data) => {
         if (err)
           res.status(500).send({
@@ -130,6 +131,19 @@ exports.find = (req, res) => {
           });
         else res.send(data);
       });
+
+
+    // if this is a GET for Report call
+    if(id == null && person_ID == null && name == null && report != null && type != null)
+    Group.findReportType(type, (err, data) => {
+        if (err)
+          res.status(500).send({
+            message:
+              err.message || "Internal server error - get group."
+          });
+        else res.send(data);
+      });
+
 }
 
 exports.update = (req, res) => {

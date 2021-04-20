@@ -103,6 +103,18 @@ Group.findReport = result => {
   })
 }
 
+Group.findReportType = (type,result) => {
+  sql.query("SELECT DISTINCT group.id, v1.value, group.name, person.f_name, person.l_name, group.image FROM ((`group` JOIN person ON group.leader = person.id) JOIN valid_value as v1 ON group.type = v1.id) WHERE group.type = " + type + " GROUP BY group.id;", (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
+      }
+      console.log("groups: ", res);
+      result(null, res);
+  })
+}
+
 Group.findMembers = (id, result) => {
   sql.query(`SELECT * FROM church.person WHERE person.ID IN (SELECT person_ID FROM group_person WHERE group_ID = ${id})`, (err, res) => {
     if (err) {
