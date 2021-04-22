@@ -8,12 +8,13 @@ const Event = function (event) {
     this.location = event.location;
     this.description = event.description;
     this.recurring = event.recurring;
+    this.name = event.name;
 }
 
 Event.create = (event, group_ID, result) => {
     let eventPromise = new Promise(function (eventResolve, eventReject) {
         sql.query(`INSERT INTO church.event SET date = "${event.date}", leader = "${event.leader}", location = "${event.location}", 
-            description = "${event.description}", recurring = "${event.recurring}"`, (err, res) => {
+            description = "${event.description}", recurring = "${event.recurring}", name = "${event.name}"`, (err, res) => {
             if (err) {
                 if (err.code == "ER_NO_REFERENCED_ROW_2" && err.sqlMessage.includes("REFERENCES `room`")) {
                     result({ kind: "not_found_room" }, null);
@@ -122,7 +123,7 @@ Event.findByPersonId = (person_ID, result) => {
 
 Event.updateById = (id, event, result) => {
     sql.query(`UPDATE event SET date = "${event.date}", leader = "${event.leader}", location = "${event.location}", 
-                description = "${event.description}", recurring = "${event.recurring}" WHERE ID = "${id}"`, (err, res) => {
+                description = "${event.description}", recurring = "${event.recurring}", name = "${event.name}" WHERE ID = "${id}"`, (err, res) => {
         if (err) {
             console.log("error: ", err);
             result(err, null);
