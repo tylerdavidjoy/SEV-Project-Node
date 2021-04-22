@@ -189,6 +189,12 @@ Family.findHeadOfHouseholdSpouse = (id, result) => {
   )
 }
 
+Family.getFamilyReport = result => {
+  sql.query(``, (err, res) => {
+    
+  })
+}
+
 Family.findFamilyForPerson = (person_ID, result) => {
   sql.query(`SELECT * FROM family WHERE family.ID IN (SELECT family_ID FROM person WHERE person.ID = "${person_ID}")`, (err, res) => {
     if (err) {
