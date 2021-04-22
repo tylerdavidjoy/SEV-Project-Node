@@ -74,6 +74,7 @@ exports.create = (req, res) => {
 exports.find = (req, res) => {
   const event_ID = req.query.event_ID;
   const person_ID = req.query.person_ID;
+  const isGetPersonObjects = req.query.isGetPersonObjects;
 
   if (event_ID == null && person_ID == null) {
     Attendee.findAll((err, data) => {
@@ -84,12 +85,21 @@ exports.find = (req, res) => {
         });
       else res.send(data);
     })
-  } else if(event_ID != null && person_ID == null) {
+  } else if (event_ID != null && person_ID == null && (isGetPersonObjects == null || isGetPersonObjects == 0)) {
     Attendee.findForEvent(event_ID, (err, data) => {
       if (err)
         res.status(500).send({
           message:
             err.message || "Internal server error - get attendee for event."
+        });
+      else res.send(data);
+    })
+  } else if (event_ID != null && person_ID == null && isGetPersonObjects == 1) {
+    Attendee.findPeopleForEvent(event_ID, (err, data) => {
+      if (err)
+        res.status(500).send({
+          message:
+            err.message || "Internal server error - get people for event."
         });
       else res.send(data);
     })
