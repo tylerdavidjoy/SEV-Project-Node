@@ -205,7 +205,7 @@ function sendEmail (message) {
         })
       }
 
-      else
+      else if(res[0].value == "group")
       {
         sql.query(`SELECT email FROM person WHERE person.id IN ( SELECT person_id FROM group_person WHERE group_ID = ${message.receipient});`, (err, res) => {
           if (err) {
@@ -223,6 +223,27 @@ function sendEmail (message) {
           }
         })
       }
+
+      else if(res[0].value == "event")
+      {
+        sql.query(`SELECT email FROM person WHERE person.id IN ( SELECT person_ID FROM attendee WHERE event_ID = ${message.receipient});`, (err, res) => {
+          if (err) {
+            console.log("error: ", err);
+            return;
+          }
+      
+          if (res.length) {
+            console.log("found emails: ", res);
+            for(var i = 0; i < res.length; i++)
+            {
+              recipients_emails.push(res[i].email);
+            }
+            sendMail2(message, recipients_emails);
+          }
+        })
+      }
+
+
     }
   })
 }
