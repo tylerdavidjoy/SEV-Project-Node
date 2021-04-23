@@ -48,17 +48,17 @@ exports.create = (req, res) => {
             message:
               err.message || "Could not find family for family_ID."
           });
-        } else if(err.kind == "not_found_person") {
+        } else if (err.kind == "not_found_person") {
           res.status(400).send({
             message:
               err.message || "Could not find person for person_ID."
           });
-        } else if(err.kind == "not_found_event") {
+        } else if (err.kind == "not_found_event") {
           res.status(400).send({
             message:
               err.message || "Could not find event for event_ID."
           });
-        } 
+        }
         else {
           res.status(500).send({
             message:
@@ -72,14 +72,47 @@ exports.create = (req, res) => {
 }
 
 exports.find = (req, res) => {
-  Attendee.findAll((err, data) => {
-    if (err)
-      res.status(500).send({
-        message:
-          err.message || "Internal server error - get attendee."
-      });
-    else res.send(data);
-  })
+  const event_ID = req.query.event_ID;
+  const person_ID = req.query.person_ID;
+  const isGetPersonObjects = req.query.isGetPersonObjects;
+
+  if (event_ID == null && person_ID == null) {
+    Attendee.findAll((err, data) => {
+      if (err)
+        res.status(500).send({
+          message:
+            err.message || "Internal server error - get attendee."
+        });
+      else res.send(data);
+    })
+  } else if (event_ID != null && person_ID == null && (isGetPersonObjects == null || isGetPersonObjects == 0)) {
+    Attendee.findForEvent(event_ID, (err, data) => {
+      if (err)
+        res.status(500).send({
+          message:
+            err.message || "Internal server error - get attendee for event."
+        });
+      else res.send(data);
+    })
+  } else if (event_ID != null && person_ID == null && isGetPersonObjects == 1) {
+    Attendee.findPeopleForEvent(event_ID, (err, data) => {
+      if (err)
+        res.status(500).send({
+          message:
+            err.message || "Internal server error - get people for event."
+        });
+      else res.send(data);
+    })
+  } else {
+    Attendee.findForPerson(person_ID, (err, data) => {
+      if (err)
+        res.status(500).send({
+          message:
+            err.message || "Internal server error - get attendee for person."
+        });
+      else res.send(data);
+    })
+  }
 }
 
 exports.delete = (req, res) => {
