@@ -146,14 +146,16 @@ CREATE TABLE `event` (
   `date` datetime DEFAULT NULL,
   `leader` int(11) DEFAULT NULL,
   `location` int(11) DEFAULT NULL,
-  `description` varchar(1000) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `description` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `recurring` tinyint(4) NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   KEY `event_leader_idx` (`leader`),
   KEY `event_location_idx` (`location`),
-  CONSTRAINT `event_leader` FOREIGN KEY (`leader`) REFERENCES `person` (`ID`) ON DELETE SET NULL ON UPDATE NO ACTION,
-  CONSTRAINT `event_location` FOREIGN KEY (`location`) REFERENCES `room` (`ID`) ON DELETE SET NULL ON UPDATE NO ACTION
+  CONSTRAINT `event_leader` FOREIGN KEY (`leader`) REFERENCES `person` (`ID`) ON DELETE SET NULL,
+  CONSTRAINT `event_location` FOREIGN KEY (`location`) REFERENCES `room` (`ID`) ON DELETE SET NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
+
 
 CREATE TABLE `attendee` (
   `person_ID` int(11) NOT NULL,

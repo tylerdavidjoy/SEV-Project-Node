@@ -15,7 +15,8 @@ exports.create = (req, res) => {
         leader: req.body.leader,
         location: req.body.location,
         description: req.body.description,
-        recurring: req.body.recurring
+        recurring: req.body.recurring,
+        name: req.body.name
     });
 
     const group_ID = req.query.group_ID;
@@ -68,7 +69,7 @@ exports.find = (req, res) => {
                 if (err.kind == "not_found") {
                     res.status(404).send({
                         message:
-                            err.message || "Could not find family for ID " + id + "."
+                            err.message || "Could not find event for ID " + id + "."
                     });
                 } else {
                     res.status(500).send({
