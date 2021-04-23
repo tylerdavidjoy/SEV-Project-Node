@@ -190,34 +190,19 @@ Family.findHeadOfHouseholdSpouse = (id, result) => {
 }
 
 Family.getFamilyReport = result => {
-  let getValidValuesPromise = new Promise(function (getValidValuesResolve) {
-    sql.query(`SELECT valid_value.ID FROM valid_value WHERE valid_value.value_group = "address" AND valid_value.value = "current"`, (err, res) => {
-      if (err) {
-        console.log("error: ", err);
-        result(err, null);
-        return;
-      } else {
-        getValidValuesResolve(res)
-      }
-    })
-  })
-  getValidValuesPromise.then(
-    function (response) {
-      sql.query(`SELECT DISTINCT fam.image, head.l_name, address, number, head.email FROM 
-        family fam LEFT JOIN address ON fam.address_ID = address.ID AND address.type = ${response[0].ID}
-        LEFT JOIN person head ON fam.head_ID = head.ID
-        LEFT JOIN person_number ON head.ID = person_number.person_ID
-        LEFT JOIN phone_number ON phone_number.ID = person_number.number_ID AND phone_number.can_publish = 1`, (err, res) => {
-        if (err) {
-          console.log("error: ", err);
-          result(err, null);
-        } else {
-          result(null, res)
-        }
-        return;
-      })
+  sql.query(`SELECT DISTINCT fam.image, head.l_name, address, number, head.email FROM 
+        ((((family fam LEFT JOIN address ON fam.address_ID = address.ID)
+        LEFT JOIN person head ON fam.head_ID = head.ID)
+        LEFT JOIN person_number ON head.ID = person_number.person_ID)
+        LEFT JOIN phone_number ON phone_number.ID = person_number.number_ID AND phone_number.can_publish = 1) GROUP BY fam.ID`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+    } else {
+      result(null, res)
     }
-  )
+    return;
+  })
 }
 
 Family.findFamilyForPerson = (person_ID, result) => {
