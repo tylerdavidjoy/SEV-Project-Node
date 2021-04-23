@@ -1,0 +1,2 @@
+This is here so when the github action is run there is something in the documents folder.
+This way, the documents folder is not deleted.

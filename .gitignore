@@ -112,6 +112,8 @@ public/images/
 
 # Document files
 public/documents/
+!doc_tracking.txt
+
 
 # TernJS port file
 .tern-port
