@@ -113,7 +113,7 @@ public/images/
 # Document files
 public/documents/
 !doc_tracking.txt
-!default.jpg
+
 
 # TernJS port file
 .tern-port
