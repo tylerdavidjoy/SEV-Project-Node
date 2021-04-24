@@ -13,46 +13,78 @@ const Event = function (event) {
 
 Event.create = (event, group_ID, result) => {
     let eventPromise = new Promise(function (eventResolve, eventReject) {
-        sql.query(`INSERT INTO church.event SET date = "${event.date}", leader = "${event.leader}", location = "${event.location}", 
-            description = "${event.description}", recurring = "${event.recurring}", name = "${event.name}"`, (err, res) => {
+        sql.query(`INSERT INTO church.event SET date = "${event.date}",` +
+            (event.leader ? ` leader = "${event.leader}",` : ``) +
+            (event.location ? ` location = "${event.location}", ` : ``) + 
+            `description = "${event.description}", recurring = "${event.recurring}", name = "${event.name}"`, (err, res) => {
             if (err) {
                 if (err.code == "ER_NO_REFERENCED_ROW_2" && err.sqlMessage.includes("REFERENCES `room`")) {
                     result({ kind: "not_found_room" }, null);
-                    return;
                 }
                 else if (err.code == "ER_NO_REFERENCED_ROW_2" && err.sqlMessage.includes("REFERENCES `person`")) {
                     result({ kind: "not_found_person" }, null);
-                    return;
                 }
                 else {
                     console.log("error: ", err);
                     eventReject(err);
                 }
-
             } else {
                 console.log("created event with id: ", res.insertId);
                 eventResolve(res.insertId);
             }
         })
-        
     })
     eventPromise.then(
         function (response) {
-            if (group_ID != null) {
+            if (event.leader != null && group_ID != null) {
                 sql.query(`INSERT INTO church.event_group SET event_ID = "${response}", group_ID = "${group_ID}"`, (err, res) => {
                     if (err) {
                         if (err.code == "ER_NO_REFERENCED_ROW_2") {
                             result({ kind: "not_found_group" }, null);
-                            return;
+                        } else {
+                            console.log("error: ", err);
+                            result(err, null);
                         }
-                        console.log("error: ", err);
-                        result(err, null);
+                    } else {
+                        console.log("created event_group with event_ID: ", response, " and group_ID: ", group_ID);
+                        sql.query(`INSERT INTO church.attendee SET person_ID = ${event.leader}, event_ID = ${response}`, (err, res) => {
+                            if (err) {
+                                console.log("error: ", err);
+                                result(err, null);
+                            } else {
+                                console.log("created attendee with event_ID: ", response, " and person_ID: ", event.leader);
+                                result(null, event);
+                            }
+                        })
+                    }
+                })
+            }
+            else if (group_ID != null) {
+                sql.query(`INSERT INTO church.event_group SET event_ID = "${response}", group_ID = "${group_ID}"`, (err, res) => {
+                    if (err) {
+                        if (err.code == "ER_NO_REFERENCED_ROW_2") {
+                            result({ kind: "not_found_group" }, null);
+                        } else {
+                            console.log("error: ", err);
+                            result(err, null);
+                        }
                     } else {
                         console.log("created event_group with event_ID: ", response, " and group_ID: ", group_ID);
                         result(null, event);
                     }
                 })
-            } else {
+            } else if (event.leader != null) {
+                sql.query(`INSERT INTO church.attendee SET person_ID = ${event.leader}, event_ID = ${response}`, (err, res) => {
+                    if (err) {
+                        console.log("error: ", err);
+                        result(err, null);
+                    } else {
+                        console.log("created attendee with event_ID: ", response, " and person_ID: ", event.leader);
+                        result(null, event);
+                    }
+                })
+            }
+            else {
                 result(null, event);
             }
         },
