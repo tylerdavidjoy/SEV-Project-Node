@@ -190,11 +190,12 @@ Family.findHeadOfHouseholdSpouse = (id, result) => {
 }
 
 Family.getFamilyReport = result => {
-  sql.query(`SELECT DISTINCT fam.image, head.l_name, address, number, head.email FROM 
-        ((((family fam LEFT JOIN address ON fam.address_ID = address.ID)
+  sql.query(`SELECT DISTINCT fam.image, head.l_name, address, number, head.email, valid_value.value FROM 
+        (((((family fam LEFT JOIN address ON fam.address_ID = address.ID)
         LEFT JOIN person head ON fam.head_ID = head.ID)
         LEFT JOIN person_number ON head.ID = person_number.person_ID)
-        LEFT JOIN phone_number ON phone_number.ID = person_number.number_ID AND phone_number.can_publish = 1) GROUP BY fam.ID`, (err, res) => {
+        LEFT JOIN phone_number ON phone_number.ID = person_number.number_ID AND phone_number.can_publish = 1)
+        LEFT JOIN valid_value ON phone_number.type = valid_value.ID) GROUP BY fam.ID`, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);
