@@ -137,8 +137,8 @@ Family.findHeadOfHouseholdSpouse = (id, result) => {
         getPersonReject(err)
       } else if (res.length > 0) {
         getPersonResolve(res[0])
-      } else { 
-        getPersonReject({kind: "not_found_head"})
+      } else {
+        getPersonReject({ kind: "not_found_head" })
       }
     })
   })
@@ -146,21 +146,21 @@ Family.findHeadOfHouseholdSpouse = (id, result) => {
     // getPersonPromise resolve
     function (response) {
       // getVVPromise
-      let getVVPromise = new Promise(function(getVVResolve, getVVReject) {
+      let getVVPromise = new Promise(function (getVVResolve, getVVReject) {
         sql.query(`SELECT * FROM valid_value WHERE valid_value.value_group = "relationship" AND valid_value.value = "spouse"`, (err, res) => {
           if (err) {
             console.log("error: ", err);
             getVVReject(err)
           } else if (res.length > 0) {
-            getVVResolve({person_ID: response.ID, valid_value_ID: res[0].ID})
+            getVVResolve({ person_ID: response.ID, valid_value_ID: res[0].ID })
           } else {
-            getVVReject({kind: "not_found_valid_value"})
+            getVVReject({ kind: "not_found_valid_value" })
           }
         })
       })
       getVVPromise.then(
         // getVVPromise resolve
-        function(response) {
+        function (response) {
           sql.query(`SELECT * FROM person WHERE person.ID IN (SELECT person2_ID FROM relationship 
             WHERE person1_ID = ${response.person_ID} AND type = ${response.valid_value_ID})`, (err, res) => {
             if (err) {
@@ -187,6 +187,22 @@ Family.findHeadOfHouseholdSpouse = (id, result) => {
       return
     }
   )
+}
+
+Family.getFamilyReport = result => {
+  sql.query(`SELECT DISTINCT fam.image, head.l_name, address, number, head.email FROM 
+        ((((family fam LEFT JOIN address ON fam.address_ID = address.ID)
+        LEFT JOIN person head ON fam.head_ID = head.ID)
+        LEFT JOIN person_number ON head.ID = person_number.person_ID)
+        LEFT JOIN phone_number ON phone_number.ID = person_number.number_ID AND phone_number.can_publish = 1) GROUP BY fam.ID`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+    } else {
+      result(null, res)
+    }
+    return;
+  })
 }
 
 Family.findFamilyForPerson = (person_ID, result) => {
