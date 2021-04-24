@@ -52,8 +52,9 @@ exports.find = (req, res) => {
     const id = req.query.id;
     const group_ID = req.query.group_ID;
     const person_ID = req.query.person_ID;
+    const isGetEventReport = req.query.isGetEventReport
     // if this is a GET ALL call
-    if (id == null && group_ID == null && person_ID == null)
+    if (id == null && group_ID == null && person_ID == null && isGetEventReport == null)
         Event.findAll((err, data) => {
             if (err)
                 res.status(500).send({
@@ -63,7 +64,7 @@ exports.find = (req, res) => {
             else res.send(data);
         });
     // if this is a GET by Id call
-    else if (id != null && group_ID == null && person_ID == null)
+    else if (id != null && group_ID == null && person_ID == null && isGetEventReport == null)
         Event.findById(id, (err, data) => {
             if (err) {
                 if (err.kind == "not_found") {
@@ -81,7 +82,7 @@ exports.find = (req, res) => {
             else res.send(data);
         });
     // if this is a get by group_ID call
-    else if (id == null && group_ID != null && person_ID == null)
+    else if (id == null && group_ID != null && person_ID == null && isGetEventReport == null)
         Event.findByGroupId(group_ID, (err, data) => {
             if (err)
                 res.status(500).send({
@@ -90,6 +91,17 @@ exports.find = (req, res) => {
                 });
             else res.send(data);
         })
+    // if this is a get event report call
+    else if (isGetEventReport == 1) {
+        Event.getEventReport((err, data) => {
+            if (err)
+                res.status(500).send({
+                    message:
+                        err.message || "Internal server error - get event report."
+                });
+            else res.send(data);
+        })
+    }
     // if this is a get by person_ID call
     else
         Event.findByPersonId(person_ID, (err, data) => {
