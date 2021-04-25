@@ -139,6 +139,22 @@ Event.findByGroupId = (group_ID, result) => {
     })
 }
 
+Event.getEventReport = result => {
+    sql.query(`SELECT DISTINCT name, description, date, leader.f_name, leader.l_name, phone_number.number, leader.email, location.room_number  FROM 
+          ((((event LEFT JOIN room location ON event.location = location.ID)
+          LEFT JOIN person leader ON event.leader = leader.ID)
+          LEFT JOIN person_number ON leader.ID = person_number.person_ID)
+          LEFT JOIN phone_number ON phone_number.ID = person_number.number_ID AND phone_number.can_publish = 1) GROUP BY event.ID`, (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+      } else {
+        result(null, res)
+      }
+      return;
+    })
+  }
+
 Event.findByPersonId = (person_ID, result) => {
     sql.query(`SELECT * FROM event WHERE event.ID IN (SELECT event_ID FROM attendee WHERE person_ID = "${person_ID}")`, (err, res) => {
         if (err) {
