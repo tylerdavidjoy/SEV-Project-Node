@@ -14,7 +14,7 @@ const Event = function (event) {
 Event.create = (event, group_ID, result) => {
     console.log(event.date)
     var temp = new Date(event.date)
-    temp = new Date(event.date).setTime(temp.getTime() + ((6*60*60*1000)))
+    temp = new Date(event.date).setTime(temp.getTime() + ((5*60*60*1000)))
     event.date = new Date(temp).toISOString()
     console.log(event.date)
 
@@ -178,10 +178,10 @@ Event.findByPersonId = (person_ID, result) => {
 Event.updateById = (id, event, result) => {
     console.log(event.date)
     var temp = new Date(event.date)
-    temp = new Date(event.date).setTime(temp.getTime() + ((6*60*60*1000)))
+    temp = new Date(event.date).setTime(temp.getTime() + ((5*60*60*1000)))
     event.date = new Date(temp).toISOString()
     console.log(event.date)
-    
+
     sql.query(`UPDATE event SET date = "${event.date}", leader = "${event.leader}", location = "${event.location}", 
                 description = "${event.description}", recurring = "${event.recurring}", name = "${event.name}" WHERE ID = "${id}"`, (err, res) => {
         if (err) {
