@@ -12,7 +12,7 @@ const Life_Event = function(life_event) {
 Life_Event.create = (life_event, result) => {
   console.log(life_event.date)
   var temp = new Date(life_event.date)
-  temp = new Date(life_event.date).setTime(temp.getTime() + ((6*60*60*1000)))
+  temp = new Date(life_event.date).setTime(temp.getTime() + ((5*60*60*1000)))
   life_event.date = new Date(temp).toISOString()
   console.log(life_event.date)
     sql.query(`INSERT INTO life_event VALUES ("",${life_event.person_ID}, "${life_event.description}", "${life_event.date}", ${life_event.type}, ${life_event.visible})`, (err, res) => {
@@ -131,7 +131,7 @@ Life_Event.findbydate = (start,end, result) => {
 Life_Event.updateById = (id, life_e, result) => {
   console.log(life_event.date)
   var temp = new Date(life_event.date)
-  temp = new Date(life_event.date).setTime(temp.getTime() + ((6*60*60*1000)))
+  temp = new Date(life_event.date).setTime(temp.getTime() + ((5*60*60*1000)))
   life_event.date = new Date(temp).toISOString()
   console.log(life_event.date)
     sql.query(`UPDATE life_event SET person_ID = "${life_e.person_ID}", description = "${life_e.description}", date = "${life_e.date}", type = ${life_e.type}, visible = ${life_e.visible} WHERE ID = "${id}"`,(err, res) => {
