@@ -14,31 +14,31 @@ const Event = function (event) {
 Event.create = (event, group_ID, result) => {
     console.log(event.date)
     var temp = new Date(event.date)
-    temp = new Date(event.date).setTime(temp.getTime() + ((5*60*60*1000)))
+    temp = new Date(event.date).setTime(temp.getTime() + ((5 * 60 * 60 * 1000)))
     event.date = new Date(temp).toISOString()
     console.log(event.date)
 
     let eventPromise = new Promise(function (eventResolve, eventReject) {
         sql.query(`INSERT INTO church.event SET date = "${event.date}",` +
             (event.leader ? ` leader = "${event.leader}",` : ``) +
-            (event.location ? ` location = "${event.location}", ` : ``) + 
+            (event.location ? ` location = "${event.location}", ` : ``) +
             `description = "${event.description}", recurring = "${event.recurring}", name = "${event.name}"`, (err, res) => {
-            if (err) {
-                if (err.code == "ER_NO_REFERENCED_ROW_2" && err.sqlMessage.includes("REFERENCES `room`")) {
-                    result({ kind: "not_found_room" }, null);
+                if (err) {
+                    if (err.code == "ER_NO_REFERENCED_ROW_2" && err.sqlMessage.includes("REFERENCES `room`")) {
+                        result({ kind: "not_found_room" }, null);
+                    }
+                    else if (err.code == "ER_NO_REFERENCED_ROW_2" && err.sqlMessage.includes("REFERENCES `person`")) {
+                        result({ kind: "not_found_person" }, null);
+                    }
+                    else {
+                        console.log("error: ", err);
+                        eventReject(err);
+                    }
+                } else {
+                    console.log("created event with id: ", res.insertId);
+                    eventResolve(res.insertId);
                 }
-                else if (err.code == "ER_NO_REFERENCED_ROW_2" && err.sqlMessage.includes("REFERENCES `person`")) {
-                    result({ kind: "not_found_person" }, null);
-                }
-                else {
-                    console.log("error: ", err);
-                    eventReject(err);
-                }
-            } else {
-                console.log("created event with id: ", res.insertId);
-                eventResolve(res.insertId);
-            }
-        })
+            })
     })
     eventPromise.then(
         function (response) {
@@ -151,15 +151,29 @@ Event.getEventReport = result => {
           LEFT JOIN person leader ON event.leader = leader.ID)
           LEFT JOIN person_number ON leader.ID = person_number.person_ID)
           LEFT JOIN phone_number ON phone_number.ID = person_number.number_ID AND phone_number.can_publish = 1) GROUP BY event.ID`, (err, res) => {
-      if (err) {
-        console.log("error: ", err);
-        result(err, null);
-      } else {
-        result(null, res)
-      }
-      return;
+        if (err) {
+            console.log("error: ", err);
+            result(err, null);
+        } else {
+            result(null, res)
+        }
+        return;
     })
-  }
+}
+
+Event.findByLeaderId = (leader_ID, result) => {
+    sql.query(`SELECT * FROM church.event WHERE event.leader = ${leader_ID}`, (err, res) => {
+        if (err) {
+            console.log("error: ", err);
+            result(err, null);
+            return;
+        }
+
+        console.log("found events: ", res);
+        result(null, res);
+        return;
+    })
+}
 
 Event.findByPersonId = (person_ID, result) => {
     sql.query(`SELECT * FROM event WHERE event.ID IN (SELECT event_ID FROM attendee WHERE person_ID = "${person_ID}")`, (err, res) => {
@@ -178,7 +192,7 @@ Event.findByPersonId = (person_ID, result) => {
 Event.updateById = (id, event, result) => {
     console.log(event.date)
     var temp = new Date(event.date)
-    temp = new Date(event.date).setTime(temp.getTime() + ((5*60*60*1000)))
+    temp = new Date(event.date).setTime(temp.getTime() + ((5 * 60 * 60 * 1000)))
     event.date = new Date(temp).toISOString()
     console.log(event.date)
 
