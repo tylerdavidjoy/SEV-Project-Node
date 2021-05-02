@@ -40,6 +40,20 @@ Event_Group.findAll = result => {
     })
 }
 
+Event_Group.findGroupByEvent = (event_ID, result) => {
+  sql.query(`SELECT * FROM church.group WHERE church.group.id IN (SELECT group_ID from event_group WHERE event_ID = ${event_ID})`, (err, res) => {
+      if (err) {
+          console.log("error: ", err);
+          result(err, null);
+          return;
+      }
+
+      console.log("found groups: ", res);
+      result(null, res);
+      return;
+  })
+}
+
 Event_Group.remove = (group_ID, event_ID, result) => {
     sql.query(`DELETE FROM event_group WHERE group_ID = "${group_ID}" AND event_ID = "${event_ID}"`, (err, res) => {
       if (err) {
