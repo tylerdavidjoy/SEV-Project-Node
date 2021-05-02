@@ -41,14 +41,26 @@ exports.create = (req, res) => {
 }
 
 exports.find = (req, res) => {
-  Event_Group.findAll((err, data) => {
-    if (err)
-      res.status(500).send({
-        message:
-          err.message || "Internal server error - get event_group."
-      });
-    else res.send(data);
-  })
+  const event_ID = req.query.event_ID;
+  if (event_ID == null) {
+    Event_Group.findAll((err, data) => {
+      if (err)
+        res.status(500).send({
+          message:
+            err.message || "Internal server error - get event_group."
+        });
+      else res.send(data);
+    })
+  } else {
+    Event_Group.findGroupByEvent(event_ID, (err, data) => {
+      if (err)
+        res.status(500).send({
+          message:
+            err.message || "Internal server error - get group for event."
+        });
+      else res.send(data);
+    })
+  }
 }
 
 exports.delete = (req, res) => {
